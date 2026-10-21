@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>I.ETM201 онлайн шалгалт</title>
+<style>
+:root{--bg:#ffffff;--surface:#ffffff;--text:#1d2530;--muted:#5c6673;--line:#d9dee4;--accent:#0e7c86;--accent-ink:#ffffff;--soft:#e8f4f5;--ok:#1f7a4d;--okbg:#e2f3ea;--bad:#b3362b;--badbg:#f8e5e2;--warn:#a85a0a;--warnbg:#fbeedd;--code:#f2f4f6;
+ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 76px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+#app{max-width:900px;margin:0 auto;padding:16px 16px 80px}
+h1{font-size:26px;line-height:1.2;margin:8px 0 4px}
+h2{font-size:21px;margin:0 0 4px}
+h3{font-size:17px;margin:0 0 6px}
+p{margin:6px 0}
+.muted{color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;margin:14px 0}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.row>*{flex:1 1 220px}
+label{display:block;font-weight:600;margin:10px 0 4px}
+input[type=text],input[type=password],select,textarea{width:100%;font:inherit;color:var(--text);background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+textarea{min-height:150px;resize:vertical;font-family:ui-monospace,Consolas,monospace;font-size:15px}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--text);padding:10px 16px;min-height:44px}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+button.danger{border-color:var(--bad);color:var(--bad)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.bar{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);margin:0 -16px;padding:calc(env(safe-area-inset-top,0px) + 8px) 16px 8px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.bar .who{flex:1 1 200px;min-width:0}
+.bar .who b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.timer{font-variant-numeric:tabular-nums;font-size:22px;font-weight:700;padding:4px 12px;border-radius:10px;background:var(--soft);color:var(--text)}
+.timer.low{background:var(--warnbg);color:var(--warn)}
+.timer.crit{background:var(--badbg);color:var(--bad)}
+.prog{height:6px;background:var(--line);border-radius:4px;overflow:hidden;flex:1 1 100%}
+.prog i{display:block;height:100%;background:var(--accent);width:0}
+.q{padding:12px 0;border-top:1px solid var(--line)}
+.q:first-of-type{border-top:0}
+.qn{font-weight:700;margin-right:6px}
+.tf{display:flex;gap:8px;margin-top:8px}
+.tf button{min-width:84px}
+.tf button.sel{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.opts{display:grid;gap:6px;margin-top:8px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border:1px solid var(--line);border-radius:10px;cursor:pointer;background:var(--bg)}
+.opt.sel{border-color:var(--accent);background:var(--soft)}
+.opt input{margin-top:5px;accent-color:var(--accent)}
+.opt b{min-width:20px}
+.fill input[type=text]{display:inline-block;width:150px;margin:2px 6px;padding:6px 10px}
+.parts div{margin:3px 0}
+.tag{display:inline-block;font-size:13px;font-weight:700;padding:2px 9px;border-radius:99px;background:var(--soft);color:var(--text)}
+.note{background:var(--warnbg);color:var(--text);border-radius:10px;padding:10px 12px;margin:10px 0}
+.code{font-family:ui-monospace,Consolas,monospace;font-size:13px;word-break:break-all;background:var(--code);padding:10px;border-radius:10px;max-height:180px;overflow:auto;width:100%;min-height:120px}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
+th{font-size:13px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}
+.chip{min-width:30px;text-align:center;padding:2px 6px;border-radius:7px;font-size:13px;font-weight:700}
+.chip.ok{background:var(--okbg);color:var(--ok)}
+.chip.no{background:var(--badbg);color:var(--bad)}
+.chip.na{background:var(--code);color:var(--muted)}
+.sol{background:var(--code);border-radius:10px;padding:10px 12px;margin:6px 0;font-size:15px;white-space:pre-wrap}
+.stu{border:1px dashed var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;white-space:pre-wrap;font-family:ui-monospace,Consolas,monospace;font-size:14px}
+.pts{width:80px;display:inline-block;padding:6px 8px}
+.footer{margin-top:24px;text-align:center;font-size:14px}
+.link{background:none;border:0;color:var(--accent);text-decoration:underline;padding:6px;min-height:0}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+.modal .box{background:var(--surface);border-radius:14px;padding:20px;max-width:460px;width:100%}
+.hide{display:none!important}
+.figbox{max-width:520px;margin:8px 0;color:var(--text)}
+.figbox .fig{width:100%;height:auto;display:block}
+.thumbs{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.th{position:relative;width:120px;height:120px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--code)}
+.th img{width:100%;height:100%;object-fit:cover;display:block}
+.th .x{position:absolute;top:4px;right:4px;min-height:0;width:28px;height:28px;padding:0;border-radius:99px;line-height:1;background:var(--surface)}
+.pimgs{display:flex;flex-direction:column;gap:8px;margin:6px 0}
+.pimgs img{max-width:100%;border:1px solid var(--line);border-radius:10px;background:#fff}
+@media (max-width:520px){h1{font-size:22px}.fill input[type=text]{width:120px}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+"use strict";
+const CONFIG = { durationMin: 80, perTF: 0.1, perMC: 0.1, perProb: 1.4, total: 10 };
+const VARIANTS = [{"id": 1, "tf": ["Гүүрэн шулуутгагч нь дөрвөн диодтой.", "Цахиурын (Si) хориотой зурвасын өргөн ойролцоогоор 1.1 эВ байдаг.", "Урвуу биастай диодоор зөвхөн үндсэн бус цэнэг зөөгчийн жижиг урвуу ханалтын гүйдэл Is гүйнэ.", "Өрөөний температурт (27 °C) дулааны хүчдэл VT ойролцоогоор 0.7 В байдаг.", "Si диодтой гүүрэн шулуутгагчийн гаралтын оргил хүчдэл ойролцоогоор Vm − 0.7 В байна.", "Цэвэр хагас дамжуулагчид чөлөөт электроны тоо нүхний тооноос үргэлж их байдаг.", "Хагас дамжуулагчийн эсэргүүцэл температур өсөхөд буурдаг.", "β = IC / IE бөгөөд α = IC / IB байна.", "Транзисторын гүйдлүүдийн хамаарал: IE = IC + IB.", "Бааз ерөнхий холболтод гүйдлийн өсгөлт β дахин их байдаг.", "Бааз нь маш нимгэн, сул хольцолсон тул эмиттерийн ихэнх электрон коллекторт хүрдэг.", "Si диодын нээгдэх хүчдэл VK ойролцоогоор 0.3 В байдаг.", "Хагас долгионы шулуутгагчид диодын PIV ≥ Vm байх ёстой.", "Гүүрэн шулуутгагчийн ачаалалд гүйдлийн чиглэл хагас үе бүрд солигдоно.", "Диодын гүйдэл шууд хүчдэлээс экспоненциал хамаардаг (Шоклигийн тэгшитгэл)."], "mc": [{"q": "Цэвэр цахиурын талст өрөөний температурт ямар шинжтэй вэ?", "o": ["Зөвхөн чөлөөт электронтой", "Чөлөөт электрон ба нүхний тоо тэнцүү", "Зөвхөн нүхтэй", "Цэнэг зөөгч огт байхгүй"]}, {"q": "p төрлийн хагас дамжуулагчийн үндсэн цэнэг зөөгч аль вэ?", "o": ["Электрон", "Протон", "Нүх", "Ион"]}, {"q": "Температур өсөхөд Si диодын шууд хүчдэл ойролцоогоор хэрхэн өөрчлөгдөх вэ?", "o": ["≈ +2.5 мВ/°C", "≈ −25 мВ/°C", "Огт өөрчлөгдөхгүй", "≈ −2.5 мВ/°C"]}, {"q": "Si диодтой цуваа хэлхээнд E = 12 В, R = 1.5 кΩ. Хялбаршуулсан загвараар (VK = 0.7 В) гүйдэл ID хэд вэ?", "o": ["7.53 мА", "8 мА", "8.47 мА", "7.07 мА"]}, {"q": "Дунд цэгтэй трансформаторт бүтэн долгионы шулуутгагчийн диодын PIV хэд байх ёстой вэ?", "o": ["PIV ≥ Vm", "PIV ≥ 2Vm", "PIV ≥ Vm/2", "PIV ≥ 0.636·Vm"]}, {"q": "Si диодтой хагас долгионы шулуутгагчийн оролт vi = 20 sin ωt (В). Гаралтын дундаж утга Vdc хэд вэ?", "o": ["6.36 В", "12.27 В", "6.14 В", "12.72 В"]}, {"q": "Si диодтой гүүрэн шулуутгагчийн оролт vi = 24 sin ωt (В). Гаралтын оргил хүчдэл хэд вэ?", "o": ["23.3 В", "24 В", "21.2 В", "22.6 В"]}, {"q": "BJT-ийн бааз яагаад нимгэн, сул хольцолсон байдаг вэ?", "o": ["Эмиттерийн электроны ихэнх нь коллекторт хүрэхийн тулд", "Эсэргүүцлийг ихэсгэхийн тулд", "Нээгдэх хүчдэлийг бууруулахын тулд", "Зөвхөн үйлдвэрлэлийг хямдруулахын тулд"]}, {"q": "α = 0.98 бөгөөд IE = 5 мА бол коллекторын гүйдэл IC хэд вэ?", "o": ["5.102 мА", "4.9 мА", "0.1 мА", "4.02 мА"]}, {"q": "Эмиттер–бааз шилжилт шууд, коллектор–бааз шилжилт урвуу биастай үед транзистор аль мужид ажиллах вэ?", "o": ["Хаалт", "Ханалт", "Идэвхтэй муж", "Нэвт цохилт"]}], "fl": ["Цэвэр цахиурын хориотой зурвасын өргөн Eg ≈ …………… эВ.", "27 °C үед дулааны хүчдэл VT ≈ …………… мВ.", "Si диодтой гүүрэн шулуутгагчийн гаралтын оргил хүчдэл Vm − …………… В.", "β = IC / …………… ба α = IC / …………… .", "IB = 40 мкА, β = 75 бол IC = …………… мА."], "pr": [{"title": "Бодлого 1", "pts": 1.4, "intro": "Si диодын ажлын цэг дээр VD = 0.7 В, ID = 5 мА байв.", "parts": ["(a) DC эсэргүүцэл RD-г ол. (0.5 оноо)", "(b) T = 27 °C үед динамик (ac) эсэргүүцэл rd-г ол (VT = 26 мВ, rB-г тооцохгүй). (0.5 оноо)", "(c) ID-г 2 дахин нэмэгдүүлбэл rd хэд болох вэ? Яагаад? (0.4 оноо)"]}, {"title": "Бодлого 2", "pts": 1.4, "intro": "Si диод, E = 12 В эх үүсвэр, R = 1.5 кΩ резистортой цуваа залгагдсан.", "parts": ["(a) Хялбаршуулсан загвар (VK = 0.7 В)-аар ID, VD, VR-г ол. (0.6 оноо)", "(b) Идеал диодын загвараар ID, VR-г ол. (0.4 оноо)", "(c) Идеал загварын ID-ийн алдааг хялбаршуулсан загвартай харьцуулж %-иар ол. (0.4 оноо)"]}, {"title": "Бодлого 3", "pts": 1.4, "intro": "Шулуутгагчийн оролт vi = 20 sin ωt (В), бүх диод Si (VK = 0.7 В).", "parts": ["(a) Хагас долгионы шулуутгагчийн гаралтын оргил хүчдэл, Vdc ба диодын PIV-г ол. (0.5 оноо)", "(b) Гүүрэн (бүтэн долгионы) шулуутгагчийн гаралтын оргил хүчдэл ба Vdc-г ол. (0.5 оноо)", "(c) Хоёр шулуутгагчийн гаралтын vo(t)-г ижил масштабтай зур. (0.4 оноо)"]}, {"title": "Бодлого 4", "pts": 1.4, "intro": "npn Si транзистортой тогтмол биастай хэлхээ: VCC = 10 В, RB = 330 кΩ (VCC-ээс баазад), RC = 1.5 кΩ (VCC-ээс коллекторт), эмиттер газардсан, β = 80. VBE = 0.7 В, VCEsat = 0.3 В.", "parts": ["(a) IB-г ол. (0.3 оноо)", "(b) IC = β·IB-г ол. (0.2 оноо)", "(c) VCE-г ол. (0.3 оноо)", "(d) VBC-г ол. (0.2 оноо)", "(e) ICsat = VCC / RC-г ол. (0.2 оноо)", "(f) Транзистор аль мужид ажиллаж байгааг тодорхойлж, үндэслэ. (0.2 оноо)"]}, {"title": "Бодлого 5", "pts": 1.4, "intro": "", "parts": ["(a) α = 0.98 бөгөөд IE = 5 мА бол IC, IB ба β-г ол. (0.5 оноо)", "(b) Энэ транзисторын ICBO = 2 мкА бол ICEO-г ол. (0.4 оноо)", "(c) PCmax = 300 мВт, ICmax = 50 мА, BVCEO = 20 В бол PCmax-ийн муруйн хоёр цэгийг ол: ICmax үеийн VCE ба VCE = BVCEO үеийн IC. (0.5 оноо)"]}]}, {"id": 2, "tf": ["n төрлийн хагас дамжуулагчид үндсэн цэнэг зөөгч нь нүх байдаг.", "Өрөөний температурт (27 °C) дулааны хүчдэл VT ойролцоогоор 26 мВ байдаг.", "Бүтэн долгионы шулуутгагчийн гаралтын пульсацийн давтамж оролтоос 2 дахин их.", "Гүүрэн шулуутгагчийн ачаалалд гүйдэл хоёр хагас үед нэг чиглэлд гүйнэ.", "Диодын динамик эсэргүүцэл rd нь ID ихсэхэд ихэсдэг.", "Диодын гүйдэл шууд хүчдэлтэй шууд пропорциональ (шугаман) хамааралтай.", "Бааз ерөнхий холболтод гүйдлийн өсгөлт β дахин их байдаг.", "Донор хольцонд таван валенттай атом (фосфор, хүнцэл, сурьма) ордог.", "n төрлийн хагас дамжуулагч нь сөрөг цэнэгтэй байдаг.", "ICEO нь ICBO-оос үргэлж бага байна.", "Гүүрэн шулуутгагч нь дөрвөн диодтой.", "Бааз нь маш нимгэн, сул хольцолсон тул эмиттерийн ихэнх электрон коллекторт хүрдэг.", "Идэвхтэй мужид Si транзисторын VBE ойролцоогоор 0.7 В байна.", "Цахиурын (Si) хориотой зурвасын өргөн ойролцоогоор 0.67 эВ байдаг.", "Хагас долгионы шулуутгагчийн гаралтын давтамж оролтынхоос 2 дахин их."], "mc": [{"q": "Хагас дамжуулагчийн температур өсөхөд түүний эсэргүүцэл хэрхэн өөрчлөгдөх вэ?", "o": ["Нэмэгдэнэ", "Өөрчлөгдөхгүй", "Буурна", "Эхлээд нэмэгдэж, дараа нь тэг болно"]}, {"q": "Акцептор хольцонд ямар валенттай атом ордог вэ?", "o": ["5 валенттай", "4 валенттай", "2 валенттай", "3 валенттай"]}, {"q": "Зенер диод ямар мужид ажиллах зориулалттай вэ?", "o": ["Урвуу нэвт цохилт", "Шууд биас", "Хаалт (IB = 0)", "Ханалт"]}, {"q": "Si диодтой цуваа хэлхээнд E = 9 В, R = 2.0 кΩ. Хялбаршуулсан загвараар (VK = 0.7 В) гүйдэл ID хэд вэ?", "o": ["4.5 мА", "4.15 мА", "4.85 мА", "3.8 мА"]}, {"q": "Шулуутгагчийн гаралтад зэрэгцээ залгасан конденсаторын үүрэг юу вэ?", "o": ["Оролтын давтамжийг 2 дахин нэмнэ", "Диодын PIV-г бууруулна", "Пульсацийг бууруулж гаралтыг тэгшилнэ", "Гаралтын хүчдэлийг тэг болгоно"]}, {"q": "Si диодтой хагас долгионы шулуутгагчийн оролт vi = 30 sin ωt (В). Гаралтын дундаж утга Vdc хэд вэ?", "o": ["9.54 В", "18.63 В", "19.08 В", "9.32 В"]}, {"q": "Si диодтой гүүрэн шулуутгагчийн оролт vi = 18 sin ωt (В). Гаралтын оргил хүчдэл хэд вэ?", "o": ["16.6 В", "17.3 В", "18 В", "15.2 В"]}, {"q": "npn транзисторт гүйдлүүдийн зөв хамаарал аль вэ?", "o": ["IC = IE + IB", "IE = IC + IB", "IB = IC + IE", "IE = IC − IB"]}, {"q": "α = 0.99 бөгөөд IE = 8 мА бол коллекторын гүйдэл IC хэд вэ?", "o": ["8.081 мА", "0.08 мА", "7.92 мА", "7.01 мА"]}, {"q": "Эмиттер–бааз ба коллектор–бааз шилжилт хоёул урвуу биастай бол транзистор аль мужид байх вэ?", "o": ["Идэвхтэй муж", "Ханалт", "Нэвт цохилт", "Хаалт"]}], "fl": ["Германи (Ge)-ийн хориотой зурвасын өргөн Eg ≈ …………… эВ.", "ID = Is(e^(VD/nVT) − 1) тэгшитгэлийг ……………-ийн тэгшитгэл гэнэ.", "Дунд цэгтэй трансформаторт шулуутгагчийн диодын PIV ≥ …………… .", "Транзисторын гурван ажлын муж: идэвхтэй, ……………, …………… .", "α = 0.99 бол β = …………… ."], "pr": [{"title": "Бодлого 1", "pts": 1.4, "intro": "Si диодын ажлын цэг дээр VD = 0.68 В, ID = 4 мА байв.", "parts": ["(a) DC эсэргүүцэл RD-г ол. (0.5 оноо)", "(b) T = 27 °C үед динамик (ac) эсэргүүцэл rd-г ол (VT = 26 мВ, rB-г тооцохгүй). (0.5 оноо)", "(c) ID-г 2 дахин нэмэгдүүлбэл rd хэд болох вэ? Яагаад? (0.4 оноо)"]}, {"title": "Бодлого 2", "pts": 1.4, "intro": "Si диод, E = 9 В эх үүсвэр, R = 2.0 кΩ резистортой цуваа залгагдсан.", "parts": ["(a) Хялбаршуулсан загвар (VK = 0.7 В)-аар ID, VD, VR-г ол. (0.6 оноо)", "(b) Идеал диодын загвараар ID, VR-г ол. (0.4 оноо)", "(c) Идеал загварын ID-ийн алдааг хялбаршуулсан загвартай харьцуулж %-иар ол. (0.4 оноо)"]}, {"title": "Бодлого 3", "pts": 1.4, "intro": "Шулуутгагчийн оролт vi = 30 sin ωt (В), бүх диод Si (VK = 0.7 В).", "parts": ["(a) Хагас долгионы шулуутгагчийн гаралтын оргил хүчдэл, Vdc ба диодын PIV-г ол. (0.5 оноо)", "(b) Гүүрэн (бүтэн долгионы) шулуутгагчийн гаралтын оргил хүчдэл ба Vdc-г ол. (0.5 оноо)", "(c) Хоёр шулуутгагчийн гаралтын vo(t)-г ижил масштабтай зур. (0.4 оноо)"]}, {"title": "Бодлого 4", "pts": 1.4, "intro": "npn Si транзистортой тогтмол биастай хэлхээ: VCC = 12 В, RB = 560 кΩ (VCC-ээс баазад), RC = 3.3 кΩ (VCC-ээс коллекторт), эмиттер газардсан, β = 120. VBE = 0.7 В, VCEsat = 0.3 В.", "parts": ["(a) IB-г ол. (0.3 оноо)", "(b) IC = β·IB-г ол. (0.2 оноо)", "(c) VCE-г ол. (0.3 оноо)", "(d) VBC-г ол. (0.2 оноо)", "(e) ICsat = VCC / RC-г ол. (0.2 оноо)", "(f) Транзистор аль мужид ажиллаж байгааг тодорхойлж, үндэслэ. (0.2 оноо)"]}, {"title": "Бодлого 5", "pts": 1.4, "intro": "", "parts": ["(a) α = 0.99 бөгөөд IE = 8 мА бол IC, IB ба β-г ол. (0.5 оноо)", "(b) Энэ транзисторын ICBO = 1 мкА бол ICEO-г ол. (0.4 оноо)", "(c) PCmax = 500 мВт, ICmax = 100 мА, BVCEO = 40 В бол PCmax-ийн муруйн хоёр цэгийг ол: ICmax үеийн VCE ба VCE = BVCEO үеийн IC. (0.5 оноо)"]}]}, {"id": 3, "tf": ["npn транзисторт эмиттерийн сум бааз руу чиглэнэ.", "Идэвхтэй мужид Si транзисторын VBE ойролцоогоор 0.7 В байна.", "Зенер диод нь урвуу нэвт цохилтын мужид тогтмол хүчдэл барих зорилгоор ажилладаг.", "LED шууд биастай үед электрон–нүхний нэгдлээр гэрэл цацруулна.", "n төрлийн хагас дамжуулагч нь сөрөг цэнэгтэй байдаг.", "Диодын динамик эсэргүүцэл rd нь ID ихсэхэд ихэсдэг.", "Бүтэн долгионы шулуутгагчийн гаралтын пульсацийн давтамж оролтын давтамжтай тэнцүү.", "Тусгаарлагчийн хориотой зурвас нь хагас дамжуулагчийнхаас нарийн байдаг.", "Дунд цэгтэй трансформаторт шулуутгагчийн диод бүр дээр урвуу хүчдэл ойролцоогоор 2Vm хүрдэг.", "Температур өсөхөд Si диодын шууд хүчдэл ойролцоогоор 2.5 мВ/°C-ээр буурна.", "Ханалтад IC = β·IB томьёо хүчинтэй хэвээр, VCE ≈ VCC болно.", "ICEO = (β + 1)·ICBO байна.", "GaAs-ийн электроны хөдөлгөөнт чанар Si-ээс өндөр тул өндөр давтамжийн хэлхээнд хэрэглэдэг.", "Донор хольцонд гурван валенттай атом (бор, галли) ордог.", "Хагас долгионы шулуутгагчийн гаралтын давтамж оролтын давтамжтай тэнцүү."], "mc": [{"q": "Дараах материалаас хориотой зурвасын өргөн хамгийн их нь аль вэ?", "o": ["Si (1.1 эВ)", "Ge (0.67 эВ)", "Бүгд ижил", "GaAs (1.43 эВ)"]}, {"q": "n төрлийн хагас дамжуулагчийн үндсэн бус цэнэг зөөгч аль вэ?", "o": ["Нүх", "Электрон", "Донорын ион", "Нейтрон"]}, {"q": "ID ихсэхэд диодын динамик эсэргүүцэл rd хэрхэн өөрчлөгдөх вэ?", "o": ["Өснө", "Буурна", "Өөрчлөгдөхгүй", "Хязгааргүй болно"]}, {"q": "Si диодтой цуваа хэлхээнд E = 15 В, R = 3.0 кΩ. Хялбаршуулсан загвараар (VK = 0.7 В) гүйдэл ID хэд вэ?", "o": ["5 мА", "5.23 мА", "4.77 мА", "4.53 мА"]}, {"q": "Хагас долгионы шулуутгагчид диодын PIV хэд байх ёстой вэ? (Vm — оролтын оргил)", "o": ["PIV ≥ Vm/2", "PIV ≥ 2Vm", "PIV ≥ 0.318·Vm", "PIV ≥ Vm"]}, {"q": "Si диодтой хагас долгионы шулуутгагчийн оролт vi = 15 sin ωt (В). Гаралтын дундаж утга Vdc хэд вэ?", "o": ["4.55 В", "4.77 В", "9.09 В", "9.54 В"]}, {"q": "Si диодтой гүүрэн шулуутгагчийн оролт vi = 30 sin ωt (В). Гаралтын оргил хүчдэл хэд вэ?", "o": ["29.3 В", "28.6 В", "30 В", "27.2 В"]}, {"q": "β-ийн тодорхойлолт аль вэ?", "o": ["β = IC / IE", "β = IE / IB", "β = IC / IB", "β = IB / IC"]}, {"q": "α = 0.97 бөгөөд IE = 4 мА бол коллекторын гүйдэл IC хэд вэ?", "o": ["4.124 мА", "0.12 мА", "3.03 мА", "3.88 мА"]}, {"q": "Эмиттер–бааз ба коллектор–бааз шилжилт хоёул шууд биастай бол транзистор аль мужид байх вэ?", "o": ["Ханалт", "Идэвхтэй муж", "Хаалт", "Нэвт цохилт"]}], "fl": ["GaAs-ийн хориотой зурвасын өргөн Eg ≈ …………… эВ.", "Урвуу нэвт цохилтын мужид тогтмол хүчдэл барьдаг диодыг …………… диод гэнэ.", "Хагас долгионы шулуутгагчийн диодын PIV ≥ …………… .", "npn транзисторын гурван гаргалт: ……………, ……………, …………… .", "β = 100 бол α = …………… (3 орны нарийвчлалтай)."], "pr": [{"title": "Бодлого 1", "pts": 1.4, "intro": "Si диодын ажлын цэг дээр VD = 0.72 В, ID = 8 мА байв.", "parts": ["(a) DC эсэргүүцэл RD-г ол. (0.5 оноо)", "(b) T = 27 °C үед динамик (ac) эсэргүүцэл rd-г ол (VT = 26 мВ, rB-г тооцохгүй). (0.5 оноо)", "(c) ID-г 2 дахин нэмэгдүүлбэл rd хэд болох вэ? Яагаад? (0.4 оноо)"]}, {"title": "Бодлого 2", "pts": 1.4, "intro": "Si диод, E = 15 В эх үүсвэр, R = 3.0 кΩ резистортой цуваа залгагдсан.", "parts": ["(a) Хялбаршуулсан загвар (VK = 0.7 В)-аар ID, VD, VR-г ол. (0.6 оноо)", "(b) Идеал диодын загвараар ID, VR-г ол. (0.4 оноо)", "(c) Идеал загварын ID-ийн алдааг хялбаршуулсан загвартай харьцуулж %-иар ол. (0.4 оноо)"]}, {"title": "Бодлого 3", "pts": 1.4, "intro": "Шулуутгагчийн оролт vi = 15 sin ωt (В), бүх диод Si (VK = 0.7 В).", "parts": ["(a) Хагас долгионы шулуутгагчийн гаралтын оргил хүчдэл, Vdc ба диодын PIV-г ол. (0.5 оноо)", "(b) Гүүрэн (бүтэн долгионы) шулуутгагчийн гаралтын оргил хүчдэл ба Vdc-г ол. (0.5 оноо)", "(c) Хоёр шулуутгагчийн гаралтын vo(t)-г ижил масштабтай зур. (0.4 оноо)"]}, {"title": "Бодлого 4", "pts": 1.4, "intro": "npn Si транзистортой тогтмол биастай хэлхээ: VCC = 9 В, RB = 220 кΩ (VCC-ээс баазад), RC = 2.7 кΩ (VCC-ээс коллекторт), эмиттер газардсан, β = 90. VBE = 0.7 В, VCEsat = 0.3 В.", "parts": ["(a) IB-г ол. (0.3 оноо)", "(b) IC = β·IB-г ол. (0.2 оноо)", "(c) VCE-г ол. (0.3 оноо)", "(d) VBC-г ол. (0.2 оноо)", "(e) ICsat = VCC / RC-г ол. (0.2 оноо)", "(f) Транзистор аль мужид ажиллаж байгааг тодорхойлж, үндэслэ. (0.2 оноо)"]}, {"title": "Бодлого 5", "pts": 1.4, "intro": "", "parts": ["(a) α = 0.97 бөгөөд IE = 4 мА бол IC, IB ба β-г ол. (0.5 оноо)", "(b) Энэ транзисторын ICBO = 5 мкА бол ICEO-г ол. (0.4 оноо)", "(c) PCmax = 250 мВт, ICmax = 40 мА, BVCEO = 30 В бол PCmax-ийн муруйн хоёр цэгийг ол: ICmax үеийн VCE ба VCE = BVCEO үеийн IC. (0.5 оноо)"]}]}, {"id": 4, "tf": ["Ковалент холбоо тасрахад чөлөөт электрон ба нүх хос үүснэ.", "Шууд биастай p–n шилжилтэд ядуурсан муж өргөсдөг.", "npn транзисторт эмиттерийн сум бааз руу чиглэнэ.", "Хагас долгионы шулуутгагчийн идеал Vdc = 0.636·Vm байна.", "Идеал загварт нээлттэй Si диод дээр 0.7 В хүчдэл унана.", "Ханалтад VCE ойролцоогоор 0.3 В-оос бага болж, IC < β·IB байна.", "Бүтэн долгионы шулуутгагчийн идеал Vdc = 0.636·Vm байна.", "Нүх нь электроноос их масстай, сөрөг цэнэгтэй бөөмс юм.", "Валентын ба дамжуулах зурвасын хоорондох энергийн зөрүүг хориотой зурвас гэнэ.", "Идэвхтэй мужид эмиттер–бааз ба коллектор–бааз шилжилт хоёул шууд биастай байна.", "Шулуутгагчийн гаралтад зэрэгцээ конденсатор залгавал пульсац нэмэгдэнэ.", "LED шууд биастай үед электрон–нүхний нэгдлээр гэрэл цацруулна.", "Температур өсөхөд Si диодын шууд хүчдэл ойролцоогоор 2.5 мВ/°C-ээр буурна.", "GaAs-ийн электроны хөдөлгөөнт чанар Si-ээс өндөр тул өндөр давтамжийн хэлхээнд хэрэглэдэг.", "Дунд цэгтэй трансформаторт шулуутгагчид PIV ≥ Vm хангалттай."], "mc": [{"q": "Валентын зурваснаас дамжуулах зурваст электрон шилжихэд шаардагдах хамгийн бага энергийг юу гэх вэ?", "o": ["Хориотой зурвасын өргөн Eg", "Нээгдэх хүчдэл", "Дулааны хүчдэл VT", "Нэвт цохилтын хүчдэл"]}, {"q": "Хольцолсон хагас дамжуулагч цахилгаан цэнэгийн хувьд ямар байдаг вэ?", "o": ["n төрөл сөрөг, p төрөл эерэг цэнэгтэй", "Саармаг", "Үргэлж эерэг цэнэгтэй", "Үргэлж сөрөг цэнэгтэй"]}, {"q": "Урвуу биастай диодоор гүйх жижиг гүйдлийн шалтгаан аль вэ?", "o": ["Үндсэн цэнэг зөөгч", "Гадны гэрэл заавал", "Үндсэн бус цэнэг зөөгч", "Ковалент холбоо"]}, {"q": "Si диодтой цуваа хэлхээнд E = 6 В, R = 1.0 кΩ. Хялбаршуулсан загвараар (VK = 0.7 В) гүйдэл ID хэд вэ?", "o": ["6 мА", "6.7 мА", "4.6 мА", "5.3 мА"]}, {"q": "Гүүрэн шулуутгагчид хэдэн диод ашигладаг вэ?", "o": ["4", "1", "2", "6"]}, {"q": "Si диодтой хагас долгионы шулуутгагчийн оролт vi = 24 sin ωt (В). Гаралтын дундаж утга Vdc хэд вэ?", "o": ["7.63 В", "7.41 В", "14.82 В", "15.26 В"]}, {"q": "Si диодтой гүүрэн шулуутгагчийн оролт vi = 12 sin ωt (В). Гаралтын оргил хүчдэл хэд вэ?", "o": ["11.3 В", "12 В", "10.6 В", "9.2 В"]}, {"q": "Бааз ерөнхий холболтод IC ба IE-ийн хамаарал ямар вэ?", "o": ["IC = β·IE", "IC ≈ IB", "IC ≈ 0", "IC ≈ IE (α ≈ 1)"]}, {"q": "α = 0.995 бөгөөд IE = 10 мА бол коллекторын гүйдэл IC хэд вэ?", "o": ["9.95 мА", "10.05 мА", "0.05 мА", "9.005 мА"]}, {"q": "IB = 0 үед (бааз салсан) транзисторын коллекторын гүйдэл хэд вэ?", "o": ["β·IB", "ICEO (маш бага)", "ICsat", "VCC / RC"]}], "fl": ["n төрлийн хагас дамжуулагчид үндсэн цэнэг зөөгч нь ……………, үндсэн бус цэнэг зөөгч нь …………… .", "Шууд биастай үед гэрэл цацруулдаг диодыг …………… гэнэ.", "Хагас долгионы шулуутгагчийн идеал Vdc = …………… ·Vm.", "Идэвхтэй мужид эмиттер–бааз шилжилт …………… биастай, коллектор–бааз шилжилт …………… биастай.", "ICBO = 2 мкА, β = 99 бол ICEO = …………… мкА."], "pr": [{"title": "Бодлого 1", "pts": 1.4, "intro": "Si диодын ажлын цэг дээр VD = 0.65 В, ID = 2 мА байв.", "parts": ["(a) DC эсэргүүцэл RD-г ол. (0.5 оноо)", "(b) T = 27 °C үед динамик (ac) эсэргүүцэл rd-г ол (VT = 26 мВ, rB-г тооцохгүй). (0.5 оноо)", "(c) ID-г 2 дахин нэмэгдүүлбэл rd хэд болох вэ? Яагаад? (0.4 оноо)"]}, {"title": "Бодлого 2", "pts": 1.4, "intro": "Si диод, E = 6 В эх үүсвэр, R = 1.0 кΩ резистортой цуваа залгагдсан.", "parts": ["(a) Хялбаршуулсан загвар (VK = 0.7 В)-аар ID, VD, VR-г ол. (0.6 оноо)", "(b) Идеал диодын загвараар ID, VR-г ол. (0.4 оноо)", "(c) Идеал загварын ID-ийн алдааг хялбаршуулсан загвартай харьцуулж %-иар ол. (0.4 оноо)"]}, {"title": "Бодлого 3", "pts": 1.4, "intro": "Шулуутгагчийн оролт vi = 24 sin ωt (В), бүх диод Si (VK = 0.7 В).", "parts": ["(a) Хагас долгионы шулуутгагчийн гаралтын оргил хүчдэл, Vdc ба диодын PIV-г ол. (0.5 оноо)", "(b) Гүүрэн (бүтэн долгионы) шулуутгагчийн гаралтын оргил хүчдэл ба Vdc-г ол. (0.5 оноо)", "(c) Хоёр шулуутгагчийн гаралтын vo(t)-г ижил масштабтай зур. (0.4 оноо)"]}, {"title": "Бодлого 4", "pts": 1.4, "intro": "npn Si транзистортой тогтмол биастай хэлхээ: VCC = 15 В, RB = 680 кΩ (VCC-ээс баазад), RC = 3.3 кΩ (VCC-ээс коллекторт), эмиттер газардсан, β = 150. VBE = 0.7 В, VCEsat = 0.3 В.", "parts": ["(a) IB-г ол. (0.3 оноо)", "(b) IC = β·IB-г ол. (0.2 оноо)", "(c) VCE-г ол. (0.3 оноо)", "(d) VBC-г ол. (0.2 оноо)", "(e) ICsat = VCC / RC-г ол. (0.2 оноо)", "(f) Транзистор аль мужид ажиллаж байгааг тодорхойлж, үндэслэ. (0.2 оноо)"]}, {"title": "Бодлого 5", "pts": 1.4, "intro": "", "parts": ["(a) α = 0.995 бөгөөд IE = 10 мА бол IC, IB ба β-г ол. (0.5 оноо)", "(b) Энэ транзисторын ICBO = 0.5 мкА бол ICEO-г ол. (0.4 оноо)", "(c) PCmax = 1000 мВт, ICmax = 200 мА, BVCEO = 45 В бол PCmax-ийн муруйн хоёр цэгийг ол: ICmax үеийн VCE ба VCE = BVCEO үеийн IC. (0.5 оноо)"]}]}, {"id": 5, "tf": ["Si диодын нээгдэх хүчдэл VK ойролцоогоор 0.7 В байдаг.", "Ханалтын мужид транзисторын хоёр шилжилт хоёул урвуу биастай байна.", "Урвуу биастай диодоор зөвхөн үндсэн бус цэнэг зөөгчийн жижиг урвуу ханалтын гүйдэл Is гүйнэ.", "Хагас долгионы шулуутгагчийн идеал Vdc = 0.636·Vm байна.", "Шууд биастай p–n шилжилтэд ядуурсан муж нарийсдаг.", "Транзисторын гүйдлүүдийн хамаарал: IE = IC + IB.", "β = IC / IB бөгөөд α = IC / IE байна.", "Хагас долгионы шулуутгагчид диодын PIV нь Vm/2-оос их байх шаардлагагүй.", "Si диодтой гүүрэн шулуутгагчийн гаралтын оргил хүчдэл ойролцоогоор Vm − 0.7 В байна.", "Цэвэр хагас дамжуулагчид чөлөөт электроны тоо нүхний тооноос үргэлж их байдаг.", "Ковалент холбоо тасрахад чөлөөт электрон ба нүх хос үүснэ.", "Идэвхтэй мужид эмиттер–бааз ба коллектор–бааз шилжилт хоёул шууд биастай байна.", "Идеал загварт нээлттэй Si диод дээр 0.7 В хүчдэл унана.", "Бүтэн долгионы шулуутгагчийн идеал Vdc = 0.636·Vm байна.", "Нүх нь эерэг цэнэгтэй мэт хөдөлдөг сул орон юм."], "mc": [{"q": "Дараах материалаас электроны хөдөлгөөнт чанар хамгийн өндөр нь аль вэ?", "o": ["Si", "GaAs", "Ge", "Бүгд тэнцүү"]}, {"q": "Цахиурт ямар хольц нэмэхэд n төрлийн хагас дамжуулагч үүсэх вэ?", "o": ["Гурван валенттай (бор)", "Дөрвөн валенттай (германи)", "Таван валенттай (фосфор)", "Хоёр валенттай (магни)"]}, {"q": "Шууд биас өгөхөд p–n шилжилтийн ядуурсан муж хэрхэн өөрчлөгдөх вэ?", "o": ["Өргөснө", "Өөрчлөгдөхгүй", "Алга болж диод эвдэрнэ", "Нарийсна"]}, {"q": "Si диодтой цуваа хэлхээнд E = 20 В, R = 4.7 кΩ. Хялбаршуулсан загвараар (VK = 0.7 В) гүйдэл ID хэд вэ?", "o": ["4.11 мА", "4.26 мА", "4.4 мА", "3.96 мА"]}, {"q": "Бүтэн долгионы шулуутгагчийн гаралтын пульсацийн давтамж оролтоос хэд дахин их вэ?", "o": ["1 дахин", "2 дахин", "4 дахин", "0.5 дахин"]}, {"q": "Si диодтой хагас долгионы шулуутгагчийн оролт vi = 12 sin ωt (В). Гаралтын дундаж утга Vdc хэд вэ?", "o": ["3.82 В", "7.19 В", "3.59 В", "7.63 В"]}, {"q": "Si диодтой гүүрэн шулуутгагчийн оролт vi = 36 sin ωt (В). Гаралтын оргил хүчдэл хэд вэ?", "o": ["35.3 В", "36 В", "33.2 В", "34.6 В"]}, {"q": "Хамгийн түгээмэл өсгөгч холболт аль вэ?", "o": ["Эмиттер ерөнхий", "Бааз ерөнхий", "Коллектор ерөнхий", "Бүгд ижил түгээмэл"]}, {"q": "α = 0.96 бөгөөд IE = 6 мА бол коллекторын гүйдэл IC хэд вэ?", "o": ["6.25 мА", "5.76 мА", "0.24 мА", "5.04 мА"]}, {"q": "Транзисторыг ключ болгон хэрэглэхэд унтарсан ба залгасан төлөв аль мужуудад харгалзах вэ?", "o": ["Хаалт ба идэвхтэй муж", "Идэвхтэй муж ба ханалт", "Хаалт ба ханалт", "Идэвхтэй муж ба нэвт цохилт"]}], "fl": ["Гурван валенттай хольцыг …………… хольц гэж нэрлэх бөгөөд p төрлийн хагас дамжуулагч үүсгэнэ.", "Si диодын нээгдэх хүчдэл VK ≈ …………… В, Ge диодынх ≈ …………… В.", "Бүтэн долгионы шулуутгагчийн идеал Vdc = …………… ·Vm.", "IE = IC + …………… .", "VCC = 12 В, RC = 2 кΩ үед ICsat = …………… мА."], "pr": [{"title": "Бодлого 1", "pts": 1.4, "intro": "Si диодын ажлын цэг дээр VD = 0.75 В, ID = 10 мА байв.", "parts": ["(a) DC эсэргүүцэл RD-г ол. (0.5 оноо)", "(b) T = 27 °C үед динамик (ac) эсэргүүцэл rd-г ол (VT = 26 мВ, rB-г тооцохгүй). (0.5 оноо)", "(c) ID-г 2 дахин нэмэгдүүлбэл rd хэд болох вэ? Яагаад? (0.4 оноо)"]}, {"title": "Бодлого 2", "pts": 1.4, "intro": "Si диод, E = 20 В эх үүсвэр, R = 4.7 кΩ резистортой цуваа залгагдсан.", "parts": ["(a) Хялбаршуулсан загвар (VK = 0.7 В)-аар ID, VD, VR-г ол. (0.6 оноо)", "(b) Идеал диодын загвараар ID, VR-г ол. (0.4 оноо)", "(c) Идеал загварын ID-ийн алдааг хялбаршуулсан загвартай харьцуулж %-иар ол. (0.4 оноо)"]}, {"title": "Бодлого 3", "pts": 1.4, "intro": "Шулуутгагчийн оролт vi = 36 sin ωt (В), бүх диод Si (VK = 0.7 В).", "parts": ["(a) Хагас долгионы шулуутгагчийн гаралтын оргил хүчдэл, Vdc ба диодын PIV-г ол. (0.5 оноо)", "(b) Гүүрэн (бүтэн долгионы) шулуутгагчийн гаралтын оргил хүчдэл ба Vdc-г ол. (0.5 оноо)", "(c) Хоёр шулуутгагчийн гаралтын vo(t)-г ижил масштабтай зур. (0.4 оноо)"]}, {"title": "Бодлого 4", "pts": 1.4, "intro": "npn Si транзистортой тогтмол биастай хэлхээ: VCC = 18 В, RB = 1000 кΩ (VCC-ээс баазад), RC = 2.2 кΩ (VCC-ээс коллекторт), эмиттер газардсан, β = 200. VBE = 0.7 В, VCEsat = 0.3 В.", "parts": ["(a) IB-г ол. (0.3 оноо)", "(b) IC = β·IB-г ол. (0.2 оноо)", "(c) VCE-г ол. (0.3 оноо)", "(d) VBC-г ол. (0.2 оноо)", "(e) ICsat = VCC / RC-г ол. (0.2 оноо)", "(f) Транзистор аль мужид ажиллаж байгааг тодорхойлж, үндэслэ. (0.2 оноо)"]}, {"title": "Бодлого 5", "pts": 1.4, "intro": "", "parts": ["(a) α = 0.96 бөгөөд IE = 6 мА бол IC, IB ба β-г ол. (0.5 оноо)", "(b) Энэ транзисторын ICBO = 10 мкА бол ICEO-г ол. (0.4 оноо)", "(c) PCmax = 400 мВт, ICmax = 80 мА, BVCEO = 25 В бол PCmax-ийн муруйн хоёр цэгийг ол: ICmax үеийн VCE ба VCE = BVCEO үеийн IC. (0.5 оноо)"]}]}];
+const KEYBLOB = {"s": "3J6OggwexHrTaEYYt88MDA==", "iv": "hHAgKgZr+GXvQx8P", "c": "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", "i": 150000};
+const FIGS = {"p2": "<svg class=\"fig\" viewBox=\"200 24 360 190\" role=\"img\" aria-label=\"Цуваа диодын хэлхээ\" xmlns=\"http://www.w3.org/2000/svg\"><defs><marker id=\"fa-a\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0L10 5L0 10z\" fill=\"currentColor\"/></marker></defs><path d=\"M250 70H500\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" opacity=\".75\"/><path d=\"M500 70V90\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" opacity=\".75\"/><path d=\"M500 90l8 6l-16 12l16 12l-16 12l16 12l-8 6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M500 150V190H250\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" opacity=\".75\"/><path d=\"M250 70V112\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" opacity=\".75\"/><path d=\"M250 124V190\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" opacity=\".75\"/><path d=\"M236 112H264\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M243 124H257\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><g transform=\"translate(340 70) rotate(0)\"><path d=\"M-8 -8L8 0L-8 8Z\" fill=\"currentColor\"/><path d=\"M8 -9V9\" stroke=\"currentColor\" stroke-width=\"2.4\"/></g><text x=\"226\" y=\"124\" text-anchor=\"end\" font-size=\"14\" font-weight=\"600\" fill=\"currentColor\" opacity=\"1\">E</text><text x=\"270\" y=\"110\" text-anchor=\"start\" font-size=\"13\" font-weight=\"400\" fill=\"currentColor\" opacity=\"0.7\">+</text><text x=\"340\" y=\"48\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"600\" fill=\"currentColor\" opacity=\"1\">D</text><text x=\"526\" y=\"126\" text-anchor=\"start\" font-size=\"14\" font-weight=\"600\" fill=\"currentColor\" opacity=\"1\">R</text><path d=\"M392 96H448\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" marker-end=\"url(#fa-a)\"/><text x=\"420\" y=\"88\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"400\" fill=\"currentColor\" opacity=\"0.7\">ID</text></svg>", "p3": "<svg class=\"fig\" viewBox=\"20 40 730 225\" role=\"img\" aria-label=\"Хагас долгионы ба гүүрэн шулуутгагчийн хэлхээ\" xmlns=\"http://www.w3.org/2000/svg\"><defs><marker id=\"fb-a\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0L10 5L0 10z\" fill=\"currentColor\"/></marker></defs><text x=\"40\" y=\"56\" text-anchor=\"start\" font-size=\"13\" font-weight=\"600\" fill=\"currentColor\" opacity=\"1\">а) Хагас долгионы</text><text x=\"400\" y=\"56\" text-anchor=\"start\" font-size=\"13\" font-weight=\"600\" fill=\"currentColor\" opacity=\"1\">б) Гүүрэн (бүтэн долгионы)</text><circle cx=\"70\" cy=\"150\" r=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M60 150c3 -10 7 -10 10 0s7 10 10 0\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M70 132V90H150\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" opacity=\".75\"/><g transform=\"translate(165 90) rotate(0)\"><path d=\"M-8 -8L8 0L-8 8Z\" fill=\"currentColor\"/><path d=\"M8 -9V9\" stroke=\"currentColor\" stroke-width=\"2.4\"/></g><path d=\"M180 90H300V110\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" opacity=\".75\"/><path d=\"M300 110l8 6l-16 12l16 12l-16 12l16 12l-8 6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M300 170V210H70V168\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" opacity=\".75\"/><text x=\"40\" y=\"155\" text-anchor=\"end\" font-size=\"13\" font-weight=\"600\" fill=\"currentColor\" opacity=\"1\">vi</text><text x=\"165\" y=\"74\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\" fill=\"currentColor\" opacity=\"1\">D</text><text x=\"326\" y=\"145\" text-anchor=\"start\" font-size=\"13\" font-weight=\"600\" fill=\"currentColor\" opacity=\"1\">R</text><circle cx=\"410\" cy=\"150\" r=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M400 150c3 -10 7 -10 10 0s7 10 10 0\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M410 132V108H470V150\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" opacity=\".75\"/><path d=\"M410 168V250H700V150H650\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" opacity=\".75\"/><path d=\"M470 150L560 80L650 150L560 220Z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" opacity=\".75\"/><path d=\"M560 80V105\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" opacity=\".75\"/><path d=\"M560 105l8 6l-16 12l16 12l-16 12l16 12l-8 6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M560 165V220\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" opacity=\".75\"/><g transform=\"translate(515 115) rotate(-38)\"><path d=\"M-8 -8L8 0L-8 8Z\" fill=\"currentColor\"/><path d=\"M8 -9V9\" stroke=\"currentColor\" stroke-width=\"2.4\"/></g><g transform=\"translate(605 115) rotate(-142)\"><path d=\"M-8 -8L8 0L-8 8Z\" fill=\"currentColor\"/><path d=\"M8 -9V9\" stroke=\"currentColor\" stroke-width=\"2.4\"/></g><g transform=\"translate(515 185) rotate(-142)\"><path d=\"M-8 -8L8 0L-8 8Z\" fill=\"currentColor\"/><path d=\"M8 -9V9\" stroke=\"currentColor\" stroke-width=\"2.4\"/></g><g transform=\"translate(605 185) rotate(-38)\"><path d=\"M-8 -8L8 0L-8 8Z\" fill=\"currentColor\"/><path d=\"M8 -9V9\" stroke=\"currentColor\" stroke-width=\"2.4\"/></g><text x=\"382\" y=\"155\" text-anchor=\"end\" font-size=\"13\" font-weight=\"600\" fill=\"currentColor\" opacity=\"1\">vi</text><text x=\"492\" y=\"100\" text-anchor=\"end\" font-size=\"13\" font-weight=\"600\" fill=\"currentColor\" opacity=\"1\">D1</text><text x=\"628\" y=\"100\" text-anchor=\"start\" font-size=\"13\" font-weight=\"600\" fill=\"currentColor\" opacity=\"1\">D2</text><text x=\"492\" y=\"208\" text-anchor=\"end\" font-size=\"13\" font-weight=\"600\" fill=\"currentColor\" opacity=\"1\">D3</text><text x=\"628\" y=\"208\" text-anchor=\"start\" font-size=\"13\" font-weight=\"600\" fill=\"currentColor\" opacity=\"1\">D4</text><text x=\"580\" y=\"140\" text-anchor=\"start\" font-size=\"13\" font-weight=\"600\" fill=\"currentColor\" opacity=\"1\">R</text><text x=\"574\" y=\"72\" text-anchor=\"start\" font-size=\"13\" font-weight=\"400\" fill=\"currentColor\" opacity=\"0.7\">+</text><text x=\"574\" y=\"238\" text-anchor=\"start\" font-size=\"13\" font-weight=\"400\" fill=\"currentColor\" opacity=\"0.7\">−</text></svg>", "p4": "<svg class=\"fig\" viewBox=\"280 24 360 330\" role=\"img\" aria-label=\"Тогтмол биастай npn транзисторын хэлхээ\" xmlns=\"http://www.w3.org/2000/svg\"><defs><marker id=\"fd-a\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0L10 5L0 10z\" fill=\"currentColor\"/></marker></defs><path d=\"M330 56H510\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" opacity=\".75\"/><path d=\"M330 56V86\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" opacity=\".75\"/><path d=\"M330 86l8 6l-16 12l16 12l-16 12l16 12l-8 6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M330 146V240H450\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" opacity=\".75\"/><path d=\"M510 56V86\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" opacity=\".75\"/><path d=\"M510 86l8 6l-16 12l16 12l-16 12l16 12l-8 6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M510 146V200L450 222\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" opacity=\".75\"/><path d=\"M450 210V270\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M450 258L510 282V320\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" opacity=\".75\"/><polygon points=\"505,280 492,280.1 495.8,270.9\" fill=\"currentColor\"/><path d=\"M498 320H522\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M504 327H516\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M509 334H511\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><text x=\"420\" y=\"42\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"600\" fill=\"currentColor\" opacity=\"1\">+VCC</text><text x=\"310\" y=\"122\" text-anchor=\"end\" font-size=\"14\" font-weight=\"600\" fill=\"currentColor\" opacity=\"1\">RB</text><text x=\"534\" y=\"122\" text-anchor=\"start\" font-size=\"14\" font-weight=\"600\" fill=\"currentColor\" opacity=\"1\">RC</text><path d=\"M368 222H412\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" marker-end=\"url(#fd-a)\"/><text x=\"390\" y=\"214\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"400\" fill=\"currentColor\" opacity=\"0.7\">IB</text><path d=\"M530 158V190\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" marker-end=\"url(#fd-a)\"/><text x=\"548\" y=\"178\" text-anchor=\"start\" font-size=\"13\" font-weight=\"400\" fill=\"currentColor\" opacity=\"0.7\">IC</text><path d=\"M580 202V318\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" marker-end=\"url(#fd-a)\"/><path d=\"M516 200H580\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" opacity=\".75\"/><path d=\"M516 320H580\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" opacity=\".75\"/><text x=\"596\" y=\"264\" text-anchor=\"start\" font-size=\"13\" font-weight=\"400\" fill=\"currentColor\" opacity=\"0.7\">VCE</text><text x=\"436\" y=\"262\" text-anchor=\"end\" font-size=\"12\" font-weight=\"400\" fill=\"currentColor\" opacity=\"0.7\">B</text><text x=\"530\" y=\"214\" text-anchor=\"start\" font-size=\"12\" font-weight=\"400\" fill=\"currentColor\" opacity=\"0.7\">C</text><text x=\"530\" y=\"296\" text-anchor=\"start\" font-size=\"12\" font-weight=\"400\" fill=\"currentColor\" opacity=\"0.7\">E</text><path d=\"M580 318V202\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" marker-end=\"url(#fd-a)\"/></svg>"};
+const LS = "etm201_online_exam_v2";
+const TFN = 15, MCN = 10, FLN = 5, PRN = 5, MAXIMG = 4;
+const BLANK = "……………";
+const FIREBASE_CONFIG = { apiKey: "", authDomain: "", projectId: "", appId: "" }; // Firebase console -> Project settings -> Web app
+const MODE = (typeof claude !== "undefined" && claude && claude.use) ? "claude" : "gh";
+const RES = "exam_results", GR = "exam_grades", TAKEN = MODE === "claude" ? "exam_taken" : "exam_started";
+let FB = null, INIT_ERR = "";
+const ROSTER = {"salt": "HT/AHzTP0bE7+pHIsb+lgQ==", "s2": "JMImd5PzGYLJrlqwG7VOMg==", "i": 100000, "e": [{"h": "dd2c71923c879ce30c98b516", "g": "1-3", "vr": 3, "n": "rFf9mj6c/+Z37Pn8Rfbj2djjOnYDF7bBfVi+UoHX6LwQM6O6LehBP0/FMwE6EvaoJuEOp02Piw=="}, {"h": "7700fa66b9f55862b48241c5", "g": "1-3", "vr": 3, "n": "fmbcvWEd+3PUOc9u610SiGj6EqQZQQIan29i9j6r4ZNdjjTpniHLx7RcKGfxvlM="}, {"h": "b00fe406ef49fe449f87548a", "g": "1-3", "vr": 4, "n": "Dqp+B+VEd6sxncnEDc4YIxF2zf1ScP0KYS7fr6fGh/UZV7fCe3RDo+/0lGny"}, {"h": "008c1f9f3527dd33e2ce311c", "g": "1-3", "vr": 2, "n": "WGlhWJJ32zWjT8T0QC8nKRWY2340Pw6JiYzJwxwuyFiLpVn82u2/1mdxn85MpIPu0Q=="}, {"h": "724c719ae64ce2ed5cf17ee7", "g": "1-3", "vr": 5, "n": "i1H6MwsOKUxgotlPYsDeWkS5jBXRE4Yyal9fEH0hctjJW5SmhR/xTPUERQEg8TX6fA=="}, {"h": "7d8bf231e66385c428a04d15", "g": "1-3", "vr": 4, "n": "EbAlr6ZaCq4CigWu9o9rrAYzIwnk45Qn/HEqD/F4VMBEXOFWTmZBdLQaSu4SZV5f1efdIwV8j1AsudI="}, {"h": "550ae2dafb4de8407865d706", "g": "1-3", "vr": 3, "n": "5/vXB3ZinO+xgEA9R9PGAXHXJ+o3XA091H0FPzCVKz6js/207fYuvM1mltk830p+cgYzcA4="}, {"h": "da1f0b8c875ca7b99e11c647", "g": "1-3", "vr": 4, "n": "hb2qdr2J1wg/hSBKsDPfp5m5R8yjMIQ06sLQ7ookG4ekh9xZAqavol+sT4SXE+4="}, {"h": "09e15c293c43992924b04c01", "g": "1-3", "vr": 3, "n": "kPJ/tZPscRayRAQLUbhl9B2JjSs12B3UKezKDOmiisAbRx77VXBTSNP6F1amuvysTvdhgI8="}, {"h": "da6ee610f77e27413f04024c", "g": "1-3", "vr": 2, "n": "DPY2+wBcRG95p5DrYLKgTYAm0nZmf6O+PholA54GHcn5HKYBZL5cgV5ALK2cty3M3w=="}, {"h": "4d83d6713c013e04aa3f0bf8", "g": "1-3", "vr": 5, "n": "2ya9dvlLtUkz660e6gBsJ+bSX1B3pH/QxVTClhan1dg9LfpTf/f6U9E="}, {"h": "3056a6b458b36dbfdba298e7", "g": "1-3", "vr": 1, "n": "VGnlvcdndQK9UT3vKptkGsLOkEwaOZa366XmKw/mqw7D6KZ1iwNpm8LfeH87"}, {"h": "410366c67d0eec57ba9c684e", "g": "1-3", "vr": 4, "n": "H6yq6rG5cDMCe0HlEe0hsr3rauNQQNkni2OyqTV1MWxfyqjDf1UiTYeDZ+2sIA1Ey2w4dxQ8"}, {"h": "e65a746f72388f3968adc48a", "g": "1-3", "vr": 2, "n": "7FNMqjvz+HnxdKe7/AO3okDdhXE8q7J9aerttNX7prjF0SuVD1FXFaJKbj0ViEkHqoob"}, {"h": "857b2aef1d44a5d282972794", "g": "1-3", "vr": 2, "n": "PNzvNmnSCcUPBvGKEOO/pjNOsmggUKfzWEM3rVSyPSy0a5MIoPq6cpBLD0ElaQmngK/ZiuY="}, {"h": "8f93ee26ff542439336a02dc", "g": "1-3", "vr": 3, "n": "rk5U+zL9q9s/GQerJ6dmbJdPXKXxe6iDlOY+xiKhJXId/Wvhm8JRyO+kc+zJkutat4w="}, {"h": "92efb5cb44eb99e08a34ceb6", "g": "1-3", "vr": 2, "n": "IacAB55IXQdhpw4rHmRbR/x90kCcQFSH2p4Ss9SwDznf1K7INV13QnA2AAzzt48="}, {"h": "4fcfc4144aa9293691fa20d7", "g": "1-3", "vr": 1, "n": "aka3EAXbEaAShOKrOs67s/2gpQCAWsrFR4uczislyVw7FzeZsmZokRSCk85505A="}, {"h": "961ae1023211fdc623e49604", "g": "1-3", "vr": 4, "n": "FpQHNgToCCG1Dna8FPdKKTKqlFcqXrUCLC9X08hyrVsTfYUOZDhhSuCsmdcO+SxR/kn6ttU="}, {"h": "f51d44ed0e2ad9373f70133b", "g": "1-3", "vr": 2, "n": "dSdZRaKCTOGZTSMbt7xun1woeOhG3vZKjoO7qB9f5QknKWWSGBlmgtJD+YRm"}, {"h": "7ad77466f3306d40a74d4549", "g": "1-3", "vr": 5, "n": "BIMhC3+DKisS0nHML7JtBQuWTRg/ySM2GO6Kqc+HjKI7KBiZlZ8Ccli37kvuFLJdyJW1"}, {"h": "29bb9060bc0b43dc4fb90774", "g": "1-3", "vr": 4, "n": "/lRfilH5TcQBTn7rWKlLQl+GKAvKCqkLrR1mHHkTFAjMPI5LooSlU58+1ij48x+5QQ=="}, {"h": "d8f1112066e32b5ccbe954fb", "g": "1-3", "vr": 1, "n": "1J8STmQLN9HCcGofHl9ecqzQxNP6rWbrRD6Z1c3HA9t8YmeO5Wil7lj/TvRf"}, {"h": "0a034719f2445a5fbc477591", "g": "1-3", "vr": 1, "n": "cCLMCin5GD9ILm+DdZUq2pxkwwSrRE852dydRMjHXfr809vsLpCbouvZFXXI+AOxrg=="}, {"h": "1b1d4574489476cf3b013704", "g": "1-3", "vr": 2, "n": "7YUUYju09JUmcb4/JVWbz/Si/Ri/aRkaZUw0+WCOmf2/ITv48wAoFCwkag17Gi1BKg=="}, {"h": "e4ed7a6f070eca71e53e34b0", "g": "1-3", "vr": 5, "n": "TxT+iBXYTBGIpZ5HWg1/wao8XjlUnJboXZHScHHyJjIK9voE+v8EuvFwmxZLC2kYTQ=="}, {"h": "708dd71807dfff3b0580dcbc", "g": "1-3", "vr": 1, "n": "NkX+b2m3qqtbCz8ECFyQ7nD+quHa0y5iDRX1exNJ+4grl9swwbh2LBSw5R5sDlI="}, {"h": "947650e6584c0a9372aad0e5", "g": "1-3", "vr": 5, "n": "QCBSNd3NL47dOyXthVxitOKE5ADFfJHNtJPtkWYoFgCHZdcQrv000DQ="}, {"h": "afb706eed329f51977dc58d1", "g": "1-3", "vr": 2, "n": "83aypWyBPWCFfD2AX8wnweWt7FEyAYYPms4BTyBzmmpXHf3pETZBUiILDqbw"}, {"h": "a50b6db453d135064cb99d39", "g": "1-3", "vr": 4, "n": "/5gXsDGB9gv8bPMEP8cgRwBTaSTtB4yQDpCqA9C6UVSjZZ7dFEVvJccll+c3agGpIhCTgDy1NA=="}, {"h": "ced9b1fd826636d9b9ad5d38", "g": "1-3", "vr": 5, "n": "jfU4nUbhAXHOPpsyBXRMNj1J3UGbY/X4g88vz1PXfxZPEqoYOlMc7HvgVvMSJ78="}, {"h": "8c6f5e6cc4e5b33aa1af5a1e", "g": "1-3", "vr": 3, "n": "fUcn50kVPLySTPvRZvIGuoNUdun5AqlzutgVRbhvJQWxBizB2erLrmY4zWEYorTFVA=="}, {"h": "ef1b754d16c8e0bb0da6f1d9", "g": "1-3", "vr": 5, "n": "L+KD+BpKZ9cLWEtWRt6KpSg/WAldGjO1n0jifFpG2ZjAEiDkFmOnX+9ZiiNtPCct3A=="}, {"h": "f5ee91c58e9478eb3d750361", "g": "1-3", "vr": 3, "n": "GweqFhPJnzXNBjGkjX1SEqtLK6mRVHwTWTaHpIMDNcfP2dKSzkadCacmBDUm"}, {"h": "bd8d211a856ea80b3b9d8539", "g": "1-3", "vr": 4, "n": "DINwr8uwXe5Le4s70ElRoMl9rTwrF37QGkp/g/kajyNzUoMrjMs7h3KhH/234Jc="}, {"h": "50aad2a875feaeffe4bdc55c", "g": "1-3", "vr": 1, "n": "7nYfgM5XdF6fFaLasPIJn4hJfT7U8vy4YwfGXe6ptGesUx1lOSt969/jvw=="}, {"h": "3da76729d18648d99a4a4705", "g": "1-3", "vr": 1, "n": "ZmtTdB00axRqRaSmfOFiKgeVHS9nPLJbd/zt8YgIIGiXpDgwmhvV9L9/+WSV2vI="}, {"h": "cdc349c491a7982097361cc4", "g": "1-3", "vr": 1, "n": "tD2A9PlBfVvzhRBBlnyIHXLoobM7ioukpgjl6ha37XMVUTlTKrNSDFJMzpluwle3qnFs"}, {"h": "7da54f1cde5cefa8adc27826", "g": "1-3", "vr": 2, "n": "dVQNXx1pfemvorJpJaSpGipk6CRtdQpz5XFcN5EB3NzCQaaVIW3tnkBPMYnE"}, {"h": "10999cb8c86e541bbef3b5f8", "g": "1-3", "vr": 5, "n": "8jO/Fbq3q0n3dxRyBtU+0KaS/d4stvhfIadKcWx3BVA3M4GdMdd4xBkaEcbXxD0="}, {"h": "1bf94b1547002594597bb5e6", "g": "1-3", "vr": 4, "n": "WBpPlCwyDWLkjJwnXOxYuOtnwOmcWJ1F4bEjy/K8hJ8tGJQw7UHZkqRjQ3Y8ifw0fNSHj2s="}, {"h": "5e3df06260f6fb660c0c35c8", "g": "1-3", "vr": 2, "n": "tutVcDrHUHHfuN8U3Quq7UgS/aE9eLTPEAc+dknp++2W76oJn7u7xenaVXdo9FaSH2KL4A=="}, {"h": "5436721cb8ac8deb95107468", "g": "1-3", "vr": 3, "n": "AbHn3GhzmVWRtPOn21Fbteg6Lc5JmOBDRi4wEyUkNomFHRqvElXNwBHUL6YpNgo="}, {"h": "7661c1c82d7d91a1c1ee9d32", "g": "1-3", "vr": 1, "n": "PBZziOaDJmeqayljPgVZphscW0V/8RZUDTNXaA8h4lO1Ec6FpIuVFYVp7YTV9/z02Dgk"}, {"h": "38b0d0d907ee567af2589c53", "g": "1-3", "vr": 5, "n": "ySysYBJzk2z2VtfakC4PrA/6J5PUGnLnKgHds6Utl/7cywmiccb4gOwNkGT6"}, {"h": "7d09cf0e990214f7748f1d5b", "g": "1-3", "vr": 1, "n": "IsILHl8knOuUo8zRZFeIQKlV4DElE0r0Ddyk9IHTv+8IWdnOC2kowV1vXbUIB64rlTT9"}, {"h": "4138c5de8559b163bdbc07ec", "g": "1-3", "vr": 4, "n": "1/vkJrByHWhNkGQ/RsZyMytsGECv/N4Ep4iUgAdyLQ9PL/58Qo3Oq+Jlhug0L1SwUBc="}, {"h": "af78a44280dd334dff096a80", "g": "1-3", "vr": 1, "n": "GxqKr9P6WMkp5E32rCq+4QnPCaQqwBf3a0Jzf4u+IMj3gl+jHYxDIFtQSwkG"}, {"h": "1aae1222d356edd2aa6f11ad", "g": "1-3", "vr": 5, "n": "hQxSyxG/HxJlPY6ZlzE2NHgjxZfXJ1BkzRO5nJVCrUK8mGskn1wCOpDh8eXW"}, {"h": "fee5c0ae1bee72fbfa33d345", "g": "1-3", "vr": 2, "n": "jk9+ePtmObAP4PsvHD/JKFY+0fB59+MPOZolmHhTWIZaGUFihgfvJJgawsoP"}, {"h": "e70f79924d64ae0cdf801473", "g": "1-3", "vr": 1, "n": "clCAzMoUtAibZCVXMtnCFIKZzEwY+UJUtVP731A4W+gCGg1jEbewjn5Bh1Jv"}, {"h": "7a1c8be47e1f2cebbacf20bd", "g": "1-3", "vr": 3, "n": "atRKPRRVbM2oV1aGndxjQAOSDWH0dLQ5j9yQbKTwjgfnQn76WcvB8X6hbD5PxEQcXg=="}, {"h": "02291f69c02f582fa7a57b69", "g": "1-3", "vr": 5, "n": "Qt0tup0asozTue02aJaErYPKlNfu1s4KKeX1hDIM4695gRZ91XqwQ9+/H54MV/A0VIt5"}, {"h": "02ca29f0baa5b63f707baffd", "g": "1-3", "vr": 2, "n": "+p5yEioFIA2BYH2T/HBBobS/eoVOoGJfvI2j1CbIjA8GVK2uA3S3dBa2GlHY7SJIh8tR"}, {"h": "85b06c1813954e5c01abade1", "g": "1-3", "vr": 5, "n": "a/mU0eXqEJ6fAhKALf7UfpAmYxlLFNsaaUP/fheSwQzRPAtJf9XZf95FSCdtYEDBtCxJ"}, {"h": "8135c67c96392756d51e5fc1", "g": "1-3", "vr": 3, "n": "YBhJy66lJG2AF3v7syJi98BRlXeDjO/6wnS5SbrkGVD18lM0wNESlo84wRts1hBcmdi+I/tsuA=="}, {"h": "c32604c347d1bd665a82cd08", "g": "1-3", "vr": 4, "n": "RqGJ/JSG4QKmaSrvApvxp+HG+Rkuf94VoHNhjyZ0v9Lyv8yT7soD3cyZlSpw"}, {"h": "9684918f02321248edfcad17", "g": "1-3", "vr": 2, "n": "HFaq/fpS+ng0UAcdIFIkkzoSCU5/Hjh+b+s/3NqLwpqxEKlKNceuUUgEhgnLFcCxMw=="}, {"h": "ccacf09333f9197f9c37f948", "g": "1-3", "vr": 2, "n": "TPmPJZ7tH6TeIaQHwhoI83xmclcGB1ttJZfuS3lKgVxCsWe5hWonapGZdfF4"}, {"h": "5928250d908901e5c09ad0d4", "g": "1-3", "vr": 3, "n": "NCPlo5FXWgRO/YAP4nYjabdd/31kUOWaEPbF9Jw53XaiJFJoGjluCSFuooOv1rxqKH5QwJy2"}, {"h": "0a6913b5fe6cd991ea8a911d", "g": "1-3", "vr": 3, "n": "gOitWX5332uO8WY/yo+Wywx2xJ1BZcdc7hoUZyQoSTVcrxNF6Ptub0wWxi9ST+1EMA=="}, {"h": "fb087aa24d680f88c1e95651", "g": "1-3", "vr": 2, "n": "4iglsiQAxdC2DXdn6qsPALSQL+65xhCbZpM66IiMjjrYTM0YXwLNpiY="}, {"h": "113a0d1c0a59b8a9e1038173", "g": "1-3", "vr": 5, "n": "QyG7XB6heDI6jgTT7V2qo0SPARMpr29SzjuGZMPsnAdEpFox9QJEcmE="}, {"h": "72c828561dedd55821f08f66", "g": "1-3", "vr": 4, "n": "XQPKtiuIRdBByjV7v54xW1mZUSL+0b7V2dMECAWjOK1Iu75RliSds0XHcRSITJ0PKg=="}, {"h": "e16e1a67a20754448d2b278a", "g": "1-3", "vr": 4, "n": "jZOkk2eyJQKLuazzgCnLMrFOkkeRY5IlsVtYhscTE3/EP+yncPjkGHE17Ty57WM="}, {"h": "86aa6a09b1c2ec2e5522dc3c", "g": "1-3", "vr": 4, "n": "6o4AwnnvtzMQOutYIdLYdhoDKlj8p+N7fehSE4n5GFFHBdAlUwlsLbcDFUPd"}, {"h": "b14bf9a4f4fb7e1fd677f6e0", "g": "1-3", "vr": 4, "n": "LoAo10GXuyVR2FU0NncJOAFUKepLI90qMCeQviUmiqobsvS8NllBqxNGasORQHnDCec="}, {"h": "4a8a8b563952e4bdb20eccac", "g": "1-3", "vr": 1, "n": "YvNP3mFu6vq7nqhBV7PlPPvLDzJlpnh4QKN2+u4ZIGuuhV4S1dsdCEET/scqXyizLdl5D8c="}, {"h": "e65308e74d06f29071c3afb3", "g": "1-3", "vr": 1, "n": "jSghHs6sY+298OCKclQplx3f2ffEqHXUmmYgwyl9SQPrO4ILm+Qz6kOQPPk="}, {"h": "46c7b39fe7ae39db0d8b745d", "g": "1-3", "vr": 3, "n": "pysimjtqllURX7Raeb8gEa5Oknk4GUL7jI/0ibmoHRGf3bSElafCX9qg2o1WF50="}, {"h": "c2d20921e7dac1e771f56393", "g": "1-3", "vr": 3, "n": "TrD+h84bO7SaMJA4GKjKml7Q8dIyC24XpPRy2yYTKLq8R52S+Acx3MsWfEDIsSU="}, {"h": "4e0a8ca22c6bf5979a227cbc", "g": "1-3", "vr": 1, "n": "SpFwF1Sb27MiPyScnie3lN9C6bzWlmpuMRfIutqxjwPkrqpi8bdyVmy+Fg=="}, {"h": "6fbc4988469fc9bb79e3d741", "g": "1-3", "vr": 1, "n": "Ox6ueLL+NoHVUXH5WNoEygXCwILIvnM6UExeFhAeOHyxY6p1MZzePms="}, {"h": "76a93ccc2ccb87e48888775e", "g": "1-3", "vr": 1, "n": "1xJ5oTRCaEyYR99CcHGk2wkBbGuUBW2CgvwZu38d8YwgtlQqzXpvPv+A3tsEAtw0zuz5"}, {"h": "d1d195002094dfcdfb14572c", "g": "1-3", "vr": 5, "n": "RDp1Q2t3lAWVMSriIs+4JFBwdbskdzqT91Q33X3+pMiuEMC1FHR0GPwIPoHg0NU="}, {"h": "adaa12ca43ccaaec28c3678d", "g": "1-3", "vr": 2, "n": "Gd8S1ejSVmhRKpLMhUw3IwbkbYMe6yJ4qj9OgTL1/7iVzeHhbkWmHmBjHEUSPLemgy47"}, {"h": "123f38df4baf6a60d009da1d", "g": "1-3", "vr": 3, "n": "MLHg3W8/djGthsQnqJJllbJC+2l9VFoMrErQCRlTDSziSHtTJpi4mgZaFg=="}, {"h": "af8a25ce73df5efa503ca9bf", "g": "1-3", "vr": 3, "n": "wNzlFL6njhOybckvdGB1jDHNIcVX/H6MQkkNdbeB/agN5pOMQudzK9XwQw=="}, {"h": "f2b0791dca41fd9dedab6960", "g": "1-3", "vr": 4, "n": "xlgZASYF5PxaFESGxIXjHpEampAG3PVOzeH0r5GpGw9KZOKcT6+tlZoXRbVM"}, {"h": "ca67a54c7dde5ca2d84b5a04", "g": "1-3", "vr": 5, "n": "kAH8leuyPLtp/2ZhUjtg5Sso9gR1tGzXvzodAN+kv4gZIuViOn5x3GaCUw=="}, {"h": "999de36ba75d6c4b99941ede", "g": "1-3", "vr": 5, "n": "d0kEp1Zk7yEzjZURejXduaJ/SZOuQ06szrLCKdxYYKxbYqF1QFYn8MIcJJ3jwbABuNcT"}, {"h": "2dc039918ba94b9dd49cf7a2", "g": "3-4", "vr": 4, "n": "/vnWoQdFj/UqJjjUKgQm+vT0FXbuJbAcVWs3aCW6ca1VxK5gfj5mUaSPO8DeUpE="}, {"h": "3ec8f15524633396aaca84df", "g": "3-4", "vr": 1, "n": "M9P5FoWlHND64qkQpMdPPqdBGQb0WCtOwbFn+YhS7JpVb33X3fmRRqvsfx2YgDeV0a+74Nw="}, {"h": "6976de60894a8cdc8e9efa71", "g": "3-4", "vr": 4, "n": "iTDoRyJZGYapxKF+If4MVl8xC/zwlAsYqIFj+Le29NbK+Cpaqd/3m6eq6A=="}, {"h": "fe67ed5726cbfdf1b405002b", "g": "3-4", "vr": 3, "n": "/jJZcshm6qsUIhOSf2HfDvqcrIAkBrHt4srGc3+80bfI8rlX5cskb5/aVjmMCwlO9w=="}, {"h": "63d6a33bad1799aae4eb7496", "g": "3-4", "vr": 3, "n": "Z2s/CjOAMRez7EFPzcDpd0+f0d+P1cR36YZ7HLMI6V9Jf/TLIpbvLeTOFz2pocg="}, {"h": "eb5e7ba20bbfad3bb3e1d145", "g": "3-4", "vr": 1, "n": "WZu2+vVFO9BdPiI1ipu3DTBMT5beNkk1mjXwfVcqhxUAergvTJfBWRr6P3Burrbp1pUzssU="}, {"h": "83be1162d6ca2b3860f29333", "g": "3-4", "vr": 5, "n": "ToOLV/qwmPFX9US+qFSu/zLzKaRwrPBjjk7SrWx0UJMCXzygUoQy66VrnR1RaAw="}, {"h": "a5eebec57ef27a66d1308ce9", "g": "3-4", "vr": 2, "n": "AeChBCTw6aODzs3mRih9Yd7XfUcE/v+92yI/9IGLB4A6oPOGfG33E6tHo/jv"}, {"h": "f0908aacccabbe1ee19a366d", "g": "3-4", "vr": 1, "n": "SXlWwz50P68b8kCCCA9JpDM/WRIjPTGO+GgcxSpnCbH2syhZKTohQCkrzPX54PA8mA6Xeqi0/g=="}, {"h": "23d61d48a629d9e30ccf3944", "g": "3-4", "vr": 4, "n": "hBc07zWUmzcs/1D0o+WldhmMhwo9pT6zHLLr1BewaGR7kMJQ6EaOOtjzVhX0VRk="}, {"h": "2cd8b686d8f8a9e289e7377a", "g": "3-4", "vr": 2, "n": "Ebqr9TB7yU46x1j/QD/J2XhNQ90Y0aLMFXmiFxBhixPpx3sKwy9YEsV4JYcBzI6y109rblcsKRgp99Q="}, {"h": "4fae498a1932ce96507ba4d4", "g": "3-4", "vr": 3, "n": "r4DboE1zUbnCVwxmNYsdXUvh636spEfv2SBK/UO757wp8rVfXD4y3oHy17hvsee8AQ80+coZEI0="}, {"h": "a1505e771e147252a1527b5f", "g": "3-4", "vr": 3, "n": "SbS0j7IeDQu/hxJckGMGdekfw/HTgOvd8e1foIP4CDRrr4CoXPaaujjMCWv6aWu8O5AR"}, {"h": "41e19e97a8861c0d43fcc160", "g": "3-4", "vr": 4, "n": "vIr1lGtXnPZIbC0aqFXpHndTZ+Q+WddGYR808InqJgY7Ob1Y6L7v9WefnQ=="}, {"h": "6bcd237062dc7835bbc30d59", "g": "3-4", "vr": 1, "n": "6DFzrOIvU5MoW1H1zsvMeN5euqJ5hDNbFc8g/Lld2MPSQxpaSt6b70nYyg=="}, {"h": "c6ae578b33a53850f925c89d", "g": "3-4", "vr": 2, "n": "jjULCUesDhOiH9RhrRBIAYOZK4g3afjbaBC9Pfba9g/HoD4f2U5rJ/LOTg=="}, {"h": "534ab0efa57a26d205a2fbe8", "g": "3-4", "vr": 4, "n": "4zi5lDf9cuqiQd3T02znYEb/T4/uNVbYM3H4eCLSeb8ATFY9f3sbfpY32YCf"}, {"h": "235ad347be616a02bd47c38f", "g": "3-4", "vr": 4, "n": "mjy+qum+BAt9/jBpCunvfZgjtT61Cw5Ur44fwWvOZb5HErvFdmvE8yKCw1WhawoKpXUoTJRA"}, {"h": "a65f60bc2b74ef3b29cd630c", "g": "3-4", "vr": 2, "n": "dBlXIGOrp95aO0V16BBtaOYw0eiBZWdAZ6Uuut/Ddf/jiaeYaT9QFxy0DEW0ml6qgcL3kv5Rwg=="}, {"h": "ceb45451962fefcde94f7282", "g": "3-4", "vr": 5, "n": "+Op2XvclcJlGBMW7se+FVy7GTSL0XHetMav6h1kSUKk2AclTwchofN+N3o8uQSzyLUaydQ=="}, {"h": "7f764283f8e4185f056b3345", "g": "3-4", "vr": 3, "n": "sG8UG2SaM4XsOoWX1wKWsKH4rzzH6Fqv7o9maAZN7DOJMMoRwXCPpjvl16VRXo09ars6Zjs="}, {"h": "e02e2e1d1178a854ddd4d86e", "g": "3-4", "vr": 3, "n": "LCEaSUkN9PszY3z5HJ5KW9j55xY2xEIco4fDOC0a+piE0lX7S2eSe/mtsMDLVxre"}, {"h": "4fe101e56244c134bc841328", "g": "3-4", "vr": 1, "n": "uHNaFz+0OqN5mk9xThRm+1XoUdzcN9OQNzbCIzam1p8zCu8OKF3bsZEphw=="}, {"h": "f261d994395a2530a88c2230", "g": "3-4", "vr": 3, "n": "Iatqwa1IbBgflwhypfsK/usBoUmJ6CjxbrXI0hfFu3eHw7gTekRp2w0="}, {"h": "70f68fc59e3eb6b663b26a9b", "g": "3-4", "vr": 2, "n": "1NZ8q9k7AVvEq0rc26e8eZPsFTXUBTububw6T6XK8uV+ALrTUK0wWtXJZFQdYgk="}, {"h": "cc61b761e270c0e6562b5922", "g": "3-4", "vr": 5, "n": "eslJXpuTpVxN4Rizca72IxnMDfF0DPK1T3hdqNLVe9p6a1cwBOY/xZQrboEbY6SFcDey"}, {"h": "cf642777a43e5a7d237c807f", "g": "3-4", "vr": 3, "n": "PQwOip8C7diIlsiwm3YVfKmtfFwsMYAfN1MNec9lLsTSR/rbfaGrbipnizAR5CE="}, {"h": "6a2948044f93d31df7805324", "g": "3-4", "vr": 2, "n": "jdGBx0n1HvSUmR3R4pE8Jmv6hKxF1kTCNfXzT4kNVslQ4+ubqvI9haTBoRcXpwtPfvcv"}, {"h": "0bc8c3f0aa6eb0b6f984c778", "g": "3-4", "vr": 1, "n": "Q28rQ703wLO4+q9eXzA6NTuqFg6InDG9cAMicpJMJhbquCuLLk9pkuQ="}, {"h": "e34a8181848a838acebf0dce", "g": "3-4", "vr": 1, "n": "8No27t8mGFpFMvN7Tf2yKtLN3e12722vCJ+LxbnrUP4b3UzlplQMSB09dmGp"}, {"h": "0c3f6d624449c8f48462149f", "g": "3-4", "vr": 1, "n": "GsxSHaVQI1ZFiX50Ucjvm6+k/oHVKYJtICOVGQZkqOfE8X1bggopoDNf+3nPyDRtYkIY"}, {"h": "52614c252c4c35c71b847c4e", "g": "3-4", "vr": 1, "n": "P381fslYMc+AlwfcXRmPuvAuKYygYNon9nSUrUzNU590aXsNqw5Os6dIZaJJ"}, {"h": "1743f3a294b73f7cb6009b28", "g": "3-4", "vr": 3, "n": "aK08h2/jpSJu6MDyy17xtxh9O7v6IyAUM7jQPD7Km2v7Lqfrra/3UbO3o2PaEYKj/fzO7T0abQ=="}, {"h": "f10b46c7e5c31bda0be4ca73", "g": "3-4", "vr": 2, "n": "3cth0fbQiYmc5PP9kVtvMp5da2tF06bwqppYdwVf7sUXOFc2f2ooE4gHjqO+"}, {"h": "3776a2e85eeb5ebd7a4a01ed", "g": "3-4", "vr": 4, "n": "ys/RcgeTY4MN6I7thOrxAnD1IpsWE793oTpM18zjlszyj7GhGZYepsYG+ft5py0Gfknqpp8="}, {"h": "117b5b340f7eaaf8543f2995", "g": "3-4", "vr": 5, "n": "AeQ7jfIxIjedCA/bhrqZcmsHJnBaMXEhWPh8pA24DfxJkgh/SzP+bHeMZHzf6PU/mPIn"}, {"h": "e4ff1d88a59682f990daf9f4", "g": "3-4", "vr": 4, "n": "LmUaZJW/0K6uAaDePrE6Az0t1YWFuF3xGV5ZhRKIUQ2IzMO6kUcbLurB7w=="}, {"h": "8d30f0033ddcd5e0d24423b8", "g": "3-4", "vr": 5, "n": "AJvA2q5+1sHKFrGsWz5Fuq//glVewfwGRD11fBggBgfBCyKdMEUclYUFi8XX/J2TcSFA/+s="}, {"h": "e3fe4c16fa19482f556d01fa", "g": "3-4", "vr": 3, "n": "t1tv41dYTZ64xvSkHU58ZPa/P8z4upcSODfonW/YHH4AmmNnuy+JK/2mThvE"}, {"h": "b506858611229859d04711bc", "g": "3-4", "vr": 3, "n": "7O5s8kvBht98KY8iyLYH1TBkGl7sAcqBtI8/zgtO6TkmO3FfuHDgDwLKeQ=="}, {"h": "dc0424d0ae701d1039550204", "g": "3-4", "vr": 4, "n": "xlL3jiuB9koHZ+MyySDir3ZOQfYcdOOO327f33kbB8G+KmNcA+vC7u3OAwX3b4Y="}, {"h": "28278f367c9818d5c02908e7", "g": "3-4", "vr": 1, "n": "3E0AYd49FOReokJGW6mQwdxJxzqIogGO18YOlGfm4PEItzsR/3JoZGZ+uPxKhDQ="}, {"h": "bb02ec2bc9db80ef332b9087", "g": "3-4", "vr": 2, "n": "6BcrSce/j7j/bpUOuqYEZpHIqDw8oAblioiuxmtCvlfmakLvAu+G89km3Q=="}, {"h": "f18a67d9681f65a7bd4ae183", "g": "3-4", "vr": 3, "n": "Bp7aMQ91bSRAFfQ5pCtH7b/wzLbRdPcY/mBQRbC5HQTkHt0TewRRNykVPm6NHWgs+KwyCg=="}, {"h": "7d0edcb3d5dd341417790656", "g": "3-4", "vr": 1, "n": "ZlflEZCi/05Chk6iDSwDSBp33tbhvgmtqDfc9Su5VpXGYSHyAndUgQK1BR4o3WsMlA=="}, {"h": "9b96962c610a59be216488ea", "g": "3-4", "vr": 1, "n": "6cT9wKekMLvsD318AEV89u9gcgfdknEYoVBeUgWekFXrdnKPH/TWJEg="}, {"h": "6ec69eb0140aae50b2ec66a0", "g": "3-4", "vr": 4, "n": "/GhJpVE0yvJazmbiaJ6h6RE/jxjdIXTXtqY69dnJ6et8TiSkFKxLiQ2z64JF"}, {"h": "c447012806ccc8f4085ca946", "g": "3-4", "vr": 5, "n": "4pM//mmb0brHHUlbVPNwD/LKBPJjly7xmGeEJ63nIrJ78r8HEgz8nPKAk1uR"}, {"h": "9cb895f6e74d86e125141a0b", "g": "3-4", "vr": 2, "n": "deB14kMk8wXpZDw+mHTxbc6zlGZqvrKMNOLwrEtvTrN8j0kuMAVk7AA+PA=="}, {"h": "8196bf06d05247f79b91a47f", "g": "3-4", "vr": 5, "n": "3njCYxfnBS6mVUF87mS5XjXHMlOKufSgajK5ubyopICGeYBIJZZVJh35wsJb1i0="}, {"h": "e948a5d4360ee9a4519078c0", "g": "3-4", "vr": 3, "n": "2k9v5amGOjUd8U2q/g4zFZPsnV0ZvC+bw7pbMUQUEYHEtxZl77oS6UKmfELbq0jhFUTPCVs="}, {"h": "977043209df9df4791ca9254", "g": "3-4", "vr": 4, "n": "ixywE8P2WXf56xZhnAsh+nnAA1BWxeqZ6mZqzgkgmJBpYanNYiQHzns="}, {"h": "ae905757c0b4a3d6e5ccaef4", "g": "3-4", "vr": 3, "n": "RujTEDoqUvJmZ0SmxY0hjNa7fRrQ9Dr4ccm7Q42kWXMZS17g55p0wmB9pQ=="}, {"h": "a06fe89fbe1e32de8b8ceb72", "g": "3-4", "vr": 5, "n": "ld3CwtZoP2H+PfOVRIPQ1n9upyC13isQJ/njoxy6OidegGz7+GVKw8P/f4skBQ=="}, {"h": "e0a655ece4983b5d40c1fd60", "g": "3-4", "vr": 2, "n": "gi4vXtahoSEDb4lO8zvyeQ+MsLQLnm+gklhQWrcDBxg6JRlMJ5bJUtuc2a0uSCg="}, {"h": "bb9dcbd71a71d6b4eaa02c22", "g": "3-4", "vr": 5, "n": "kMv34NHzP0JZ2jg8E7Oj7LoSIPNr1iGnKn64U+jyyQQX4J68io1Q+QJNVg=="}, {"h": "d90755dc881cf1ae83747360", "g": "3-4", "vr": 5, "n": "sgjuBK5SvuNdzVF6/SMRZP/0+Gya6845k6zl6zHVrSxlhnYnHUJdN8polm0M"}, {"h": "5a6f6ff9bfe10a36c34ec91c", "g": "3-4", "vr": 2, "n": "7G/mXPUts3w7SCKBwkshvfm7s+IrleAFP2oxOLs4gnUKqmkt8pKp7yshFiBm"}, {"h": "37f98a39bc81875de7e7d302", "g": "3-4", "vr": 1, "n": "0t6RdXFEHfQ5NohXp5t8y4rYsKZMWnktqxAeTGBVz9Q4kZxsbufg2MstUdI9rcK+5w=="}, {"h": "4894acdb6ccbf9a9e5dabf0d", "g": "3-4", "vr": 4, "n": "BoRyjjFpu5OIhAriyOGhWstwnLm2meIfd1ySAWIj2vtdVWRPlhTy0hIIQ+txHi/2n4c="}, {"h": "e36a6aa3bf4a9648f0dff38f", "g": "3-4", "vr": 1, "n": "bZFPFnVa0XAC6fzy7xBm3u+PSM7+P/H9+6f5gp14jT3uAKkH+Wmj10X7Wu2DD10="}, {"h": "331126788a6288c38a632e82", "g": "3-4", "vr": 2, "n": "5IP6h6dXoxvOtzy8gTypJjoZLVDTjHunJV/PCeOjkKEWEApF+CXj4UPPGzWS6/Upc62BIds="}, {"h": "496dd6b830d76d46f970509e", "g": "3-4", "vr": 2, "n": "ok87XJHQ3YPalG8faZtsMi0C2m6macys25aODsP4kBbI7y6dGlo1M2Y99w=="}, {"h": "60d1fec0556c8f83c4c321ca", "g": "3-4", "vr": 2, "n": "y4T7lyXkP89YdglWlXtkfdTJFYpMLRFqrnhWagEYvDUiMMSgi9/YxkrfgPmjQn8gh9zN"}, {"h": "cfdb6b12f26b76a54667ad70", "g": "3-4", "vr": 1, "n": "fH5macHkyVfUkSZPNOiQ7P9ZbkUfI0dfUOc07HHaDDzE1MMtTOofBDY="}, {"h": "f3f25e715eea5196551ba1be", "g": "3-4", "vr": 5, "n": "BLywjrbnAUQXr3BCb/bzOTmgyMJb7czKC/BhdBSBfkxWPgHvR4tOMF02YTkGPlawneKL"}, {"h": "c4cb6d054db0508b4d80cf10", "g": "3-4", "vr": 2, "n": "h2RjUBQ+C78GO2FPQjq2LXwIa4Y7JNmaj6Y5PVaexGtQG7B2ntz+4YquM+asgzO/RySdsQ=="}, {"h": "9af7f5f8308a704f9780c49d", "g": "3-4", "vr": 3, "n": "Lu6QIS7xsfm2drcI+5v83AEtgzegCukzHdjBElvoYGFj/ZomEy2zHKzSIx+ITrwx++R6"}, {"h": "0e4cfbaf225209da10efa082", "g": "3-4", "vr": 5, "n": "ZD9DOch9VI63rlxCO2ZWzhkAbt4P2EHnbUbibidcWtcH9CBNi8t/iEXvGdVBjKm5NXWCkEBq"}, {"h": "349586097344ab80530572b8", "g": "3-4", "vr": 5, "n": "uStsxnXKvn9QOz+DH3EinxNO9XY+BhMj49FDhzfwdVC1ZnVAwbfmNRhLC3HxarJpFMxFYAI="}, {"h": "f2cd67f2648393d72b0ac807", "g": "3-4", "vr": 4, "n": "WbW+7mPujY4SY3UOupQCAOVevaANCp7rmZCvgbGzESw+pO0LR0Rl9RvHhcIYbCI="}, {"h": "2a1a776883121092a6facdbd", "g": "3-4", "vr": 5, "n": "bH6D7zeoLI4dEt0KXds8hzK2h4yvZtqF07KbfwKA4wLjhLAwyLUMMkmdm71OHX0="}, {"h": "e4bfa8c2723485db63774c51", "g": "3-4", "vr": 4, "n": "mgEYGb/U0OWPH3apZAt3lCigL/rG3Kh85Ae2ZYPtAzcUXRh+WpZ94SfcBucpj/k="}]};
+const CYR = { "В": "B", "А": "A", "С": "C", "Е": "E", "Н": "H", "К": "K", "М": "M", "О": "O", "Р": "P", "Т": "T", "Х": "X" };
+function normCode(s) { return String(s || "").trim().split("").map(c => CYR[c] || CYR[c.toUpperCase()] || c).join("").toUpperCase().replace(/\s+/g, ""); }
+async function sha256hex(s) { const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)); return [...new Uint8Array(d)].map(b => b.toString(16).padStart(2, "0")).join(""); }
+async function lookupStudent(codeRaw) {
+  const c = normCode(codeRaw); if (c.length < 6) return null;
+  const h = (await sha256hex(ROSTER.salt + c)).slice(0, 24);
+  const e = ROSTER.e.find(x => x.h === h); if (!e) return null;
+  try {
+    const km = await crypto.subtle.importKey("raw", new TextEncoder().encode(c), "PBKDF2", false, ["deriveKey"]);
+    const key = await crypto.subtle.deriveKey({ name: "PBKDF2", salt: bytes(ROSTER.s2), iterations: ROSTER.i, hash: "SHA-256" }, km, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+    const raw = bytes(e.n); const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: raw.slice(0, 12) }, key, raw.slice(12));
+    return { code: c, name: new TextDecoder().decode(pt), group: e.g, variant: e.vr };
+  } catch (err) { return null; }
+}
+
+/* ---------- helpers ---------- */
+function el(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const k in (attrs || {})) {
+    const v = attrs[k];
+    if (k === "class") e.className = v;
+    else if (k === "html") e.innerHTML = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if (v === true) e.setAttribute(k, "");
+    else if (v !== false && v != null) e.setAttribute(k, v);
+  }
+  for (const c of kids.flat()) if (c != null && c !== false) e.append(c.nodeType ? c : document.createTextNode(c));
+  return e;
+}
+function lsGet() { try { const s = localStorage.getItem(LS); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
+function lsSet(o) { try { localStorage.setItem(LS, JSON.stringify(o)); } catch (e) {} }
+function fromB64(b) { return decodeURIComponent(escape(atob(b))); }
+function bytes(b64) { const s = atob(b64), a = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) a[i] = s.charCodeAt(i); return a; }
+function pad2(n) { return String(n).padStart(2, "0"); }
+function fmtTime(sec) { sec = Math.max(0, sec | 0); return pad2(Math.floor(sec / 60)) + ":" + pad2(sec % 60); }
+function r1(x) { return Math.round(x * 10) / 10; }
+function f1(x) { return r1(x).toFixed(1); }
+function hash32(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+function safeId(s) { return String(s).replace(/[^A-Za-z0-9_\-.~:@+]/g, "_").slice(0, 120); }
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+/* ---------- local storage of images + lock (IndexedDB, with fallbacks) ---------- */
+function idbOpen() { return new Promise((res, rej) => { const r = indexedDB.open("etm201_exam_v2", 1); r.onupgradeneeded = () => r.result.createObjectStore("kv"); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); }
+async function kvGet(k) { try { const db = await idbOpen(); return await new Promise((res, rej) => { const q = db.transaction("kv").objectStore("kv").get(k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); } catch (e) { return undefined; } }
+async function kvSet(k, v) { try { const db = await idbOpen(); await new Promise((res, rej) => { const t = db.transaction("kv", "readwrite"); t.objectStore("kv").put(v, k); t.oncomplete = res; t.onerror = () => rej(t.error); }); return true; } catch (e) { return false; } }
+let IMGS = [[], [], [], [], []];
+let IMG_OK = true;
+async function persistImgs() { IMG_OK = await kvSet("imgs", IMGS); }
+async function lockGet() {
+  let a = false;
+  try { a = localStorage.getItem(LS + "_lock") === "1"; } catch (e) {}
+  try { a = a || /(?:^|; )etm201_done=1/.test(document.cookie || ""); } catch (e) {}
+  if (!a) a = !!(await kvGet("lock"));
+  return a;
+}
+function lockSet() {
+  try { localStorage.setItem(LS + "_lock", "1"); } catch (e) {}
+  try { document.cookie = "etm201_done=1; max-age=31536000; path=/; SameSite=Lax"; } catch (e) {}
+  kvSet("lock", 1);
+}
+function lockClear() {
+  try { localStorage.removeItem(LS + "_lock"); localStorage.removeItem(LS); } catch (e) {}
+  try { document.cookie = "etm201_done=; max-age=0; path=/"; } catch (e) {}
+  kvSet("lock", 0);
+}
+
+/* ---------- platform capabilities ---------- */
+let DBC = null, USER = null, UID = null;
+async function fbInit() {
+  if (window.__FB_MOCK__) return window.__FB_MOCK__;
+  if (!FIREBASE_CONFIG.apiKey) return null;
+  const base = "https://www.gstatic.com/firebasejs/10.12.2/";
+  const [appM, authM, fsM] = await Promise.all([import(base + "firebase-app.js"), import(base + "firebase-auth.js"), import(base + "firebase-firestore.js")]);
+  const app = appM.initializeApp(FIREBASE_CONFIG), auth = authM.getAuth(app), fs = fsM.getFirestore(app);
+  const snapDocs = s => ({ docs: s.docs.map(d => ({ id: d.id, data: () => d.data() })) });
+  return {
+    async anon() { if (!auth.currentUser) await authM.signInAnonymously(auth); return auth.currentUser.uid; },
+    async teacherLogin(email, pass) { await authM.signInWithEmailAndPassword(auth, email, pass); },
+    doc(path) { const ref = fsM.doc(fs, path); return { get: async () => { const s = await fsM.getDoc(ref); return { id: s.id, exists: s.exists(), data: () => s.data() }; }, set: d => fsM.setDoc(ref, d), delete: () => fsM.deleteDoc(ref) }; },
+    collection(path) { const ref = fsM.collection(fs, path); return { get: async () => snapDocs(await fsM.getDocs(ref)), onSnapshot: (cb, err) => fsM.onSnapshot(ref, s => cb(snapDocs(s)), err) }; }
+  };
+}
+async function initCaps() {
+  try {
+    if (MODE === "claude") {
+      DBC = await claude.use("db");
+      USER = await claude.use("user");
+      if (USER && USER.id) { const id = await USER.id(); if (id) UID = safeId(id); }
+    } else {
+      if (!FB) FB = await fbInit();
+      if (FB) { UID = await FB.anon(); DBC = FB; }
+    }
+    INIT_ERR = "";
+  } catch (e) { FB = null; INIT_ERR = (e && (e.code || e.message)) || String(e); }
+}
+async function saveFile(filename, data) {
+  if (MODE === "claude") { try { const dl = await claude.use("downloads"); if (!dl) return false; await dl.save({ filename, data }); return true; } catch (e) { return false; } }
+  try { const blob = new Blob([data], { type: "text/plain;charset=utf-8" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = filename; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); return true; } catch (e) { return false; }
+}
+function packAns(a) { return Object.assign({}, a, { fl: Object.fromEntries(a.fl.map((x, i) => [String(i), x])) }); }
+function unpackRec(d) { if (d && d.a && d.a.fl && !Array.isArray(d.a.fl)) { const o = d.a.fl; d.a = Object.assign({}, d.a, { fl: Object.keys(o).sort((x, y) => x - y).map(k => o[k]) }); } return d; }
+function readAsDataURL(f) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(r.error); r.readAsDataURL(f); }); }
+function loadImg(src) { return new Promise((res, rej) => { const i = new Image(); const to = setTimeout(() => rej(new Error("timeout")), 8000); i.onload = () => { clearTimeout(to); res(i); }; i.onerror = () => { clearTimeout(to); rej(new Error("img")); }; i.src = src; }); }
+async function compressImage(file) {
+  const raw = await readAsDataURL(file);
+  try {
+    const img = await loadImg(raw);
+    let max = 1400, q = 0.7, out = "";
+    for (let i = 0; i < 7; i++) {
+      const k = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+      const c = document.createElement("canvas"); c.width = Math.max(1, Math.round(img.naturalWidth * k)); c.height = Math.max(1, Math.round(img.naturalHeight * k));
+      const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
+      out = c.toDataURL("image/jpeg", q);
+      if (out.length <= 230000) return out;
+      q = Math.max(0.35, q - 0.08); max -= 150;
+    }
+    return out;
+  } catch (e) { if (raw.length <= 230000) return raw; throw e; }
+}
+
+/* ---------- state ---------- */
+let S = lsGet();
+let timerId = null;
+const root = document.getElementById("app");
+function emptyAnswers() { return { tf: Array(TFN).fill(null), mc: Array(MCN).fill(null), fl: Array.from({ length: FLN }, () => []), pr: Array(PRN).fill("") }; }
+function save() { if (S) lsSet(S); }
+function msg(t, cls) { return el("p", { class: cls || "muted", role: "status" }, t); }
+
+/* ---------- start ---------- */
+async function showStart() {
+  clearInterval(timerId); root.replaceChildren();
+  root.append(el("h1", {}, "Электроник, микроэлектроник I"), msg("Түр хүлээнэ үү…"));
+  await initCaps();
+  // lock checks
+  let locked = await lockGet();
+  if (MODE === "claude" && DBC && UID) {
+    try {
+      const snap = await DBC.doc(RES + "/" + UID).get();
+      if (snap.exists) { lockSet(); locked = true; }
+      else if (locked && S && S.submitted) { lockClear(); S = null; locked = false; } // teacher removed the record: allow retake
+    } catch (e) {}
+  }
+  if (locked) return showLocked();
+  renderStart();
+}
+function renderStart() {
+  root.replaceChildren();
+  const ready = !!(DBC && UID);
+  let found = null;
+  const code = el("input", { type: "text", id: "cd", placeholder: "B244410001", autocomplete: "off", autocapitalize: "characters", spellcheck: "false" });
+  const name = el("input", { type: "text", id: "nm", placeholder: "Т.Батгэрэл", readonly: true, "aria-label": "Овог нэр" });
+  const grpInfo = el("p", { class: "muted" }, "");
+  const err = el("p", { class: "hide", style: "color:var(--bad)", role: "alert" });
+  const go = el("button", { class: "primary", disabled: true, onclick: async () => {
+    err.classList.add("hide");
+    if (!found) return;
+    go.disabled = true;
+    try {
+      if (DBC && UID) {
+        if (MODE === "claude") {
+          const tk = await DBC.doc(TAKEN + "/" + found.code).get();
+          if (tk.exists && tk.data().u !== UID) { err.textContent = "Энэ кодоор өөр төхөөрөмж дээр шалгалт эхэлсэн байна. Багшид хандана уу."; err.classList.remove("hide"); go.disabled = false; return; }
+        }
+        await DBC.doc(TAKEN + "/" + found.code).set({ u: UID, t: Date.now() });
+      }
+    } catch (e) {
+      const denied = MODE === "gh" && e && (e.code === "permission-denied" || /permission/i.test(String(e.message || "")));
+      err.textContent = denied ? "Энэ кодоор шалгалт аль хэдийн эхэлсэн байна. Багшид хандана уу." : "Серверт холбогдож чадсангүй. Дахин оролд."; err.classList.remove("hide"); go.disabled = false; return;
+    }
+    S = { code: found.code, name: found.name, group: found.group, variant: found.variant, start: Date.now(), tab: 0, ans: emptyAnswers(), submitted: false };
+    lockSet(); save(); IMGS = [[], [], [], [], []]; persistImgs(); showTest();
+  } }, "Эхлэх");
+  const check = async () => {
+    err.classList.add("hide"); found = null; name.value = ""; grpInfo.textContent = ""; go.disabled = true;
+    const st = await lookupStudent(code.value);
+    if (!st) { err.textContent = "Энэ код шалгалтын жагсаалтад алга. Кодоо шалгаад дахин оролд, эсвэл багшид хандана уу."; err.classList.remove("hide"); return; }
+    found = st; name.value = st.name; grpInfo.textContent = "Бүлэг " + st.group + ". Нэр зөв бол «Эхлэх» дар.";
+    go.disabled = !ready;
+  };
+  code.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+  code.addEventListener("input", () => { if (found) { found = null; name.value = ""; grpInfo.textContent = ""; go.disabled = true; } });
+  root.append(
+    el("h1", {}, "Электроник, микроэлектроник I"),
+    el("p", { class: "muted" }, "Шалгалт: хагас дамжуулагч, диод, шулуутгагч, BJT"),
+    el("div", { class: "card" },
+      el("h2", {}, "Шалгалтын заавар"),
+      el("p", {}, "Нийт " + CONFIG.total + " оноо, " + CONFIG.durationMin + " минут. Таймер «Эхлэх» дарсан агшнаас эхэлнэ."),
+      el("div", { class: "row" },
+        el("div", {}, el("b", {}, "1-р хэсэг, 1.5 оноо"), el("p", { class: "muted" }, "15 мэдэгдэл: Үнэн (Ү) эсвэл Худал (Х). Нэг бүр 0.1 оноо.")),
+        el("div", {}, el("b", {}, "2-р хэсэг, 1.5 оноо"), el("p", { class: "muted" }, "10 сонгох (a–d), 5 нөхөж бичих. Нэг бүр 0.1 оноо.")),
+        el("div", {}, el("b", {}, "3-р хэсэг, 7 оноо"), el("p", { class: "muted" }, "5 бодлого, нэг бүр 1.4 оноо. Гараар бичиж, зургийг upload хийнэ."))),
+      el("div", { class: "note" }, "Шалгалтыг нэг төхөөрөмжөөс нэг л удаа өгнө. Эхэлсэн бол дахин эхлүүлэх боломжгүй. Дууссаны дараа хариу автоматаар багшид хүрнэ, код илгээх шаардлагагүй. Цонх сольсныг тоолно.")),
+    ready ? null : el("div", { class: "note", style: "border:1px solid var(--bad)" }, MODE === "gh" ? el("span", {}, el("b", {}, "Сервертэй холбогдож чадсангүй. "), FIREBASE_CONFIG.apiKey ? ((location.protocol === "file:" ? "Файлыг компьютер дээрээс нээсэн байна: зөвхөн GitHub Pages-ийн https линкээр нээнэ үү. " : "Интернэт холболтоо шалгаад хуудсыг шинэчил. ") + (INIT_ERR ? "Алдааны код: " + INIT_ERR : "")) : "Шалгалтын сервер тохируулагдаагүй байна (багшид мэдэгд).") : el("span", {}, el("b", {}, "Нэвтрээгүй байна. "), "Энэ шалгалтад багшийн урилгаар нэвтэрсэн байх шаардлагатай. Нэвтэрч орсны дараа дахин нээнэ үү.")),
+    el("div", { class: "card" },
+      el("label", { for: "cd" }, "Оюутны код"), code,
+      el("p", {}, el("button", { onclick: check }, "Шалгах")),
+      el("label", { for: "nm" }, "Овог нэр"), name, grpInfo, err, el("p", {}, go)),
+    el("div", { class: "footer" }, el("button", { class: "link", onclick: showTeacher }, "Багшийн хэсэг")));
+}
+function showLocked() {
+  clearInterval(timerId); root.replaceChildren();
+  const inProgress = S && S.start && !S.submitted;
+  if (inProgress) return showTest();
+  root.append(el("h1", {}, S && S.submitted ? "Хариу илгээгдсэн" : "Шалгалт өгсөн байна"),
+    el("div", { class: "card" },
+      el("p", {}, S && S.submitted ? (S.name + " · " + S.group + " · Вариант " + S.variant + ". Таны хариу багшид хүрсэн. Багш өөрийн талбар дээрээс үзнэ.") : "Энэ төхөөрөмжөөс шалгалт өгсөн байна. Нэг төхөөрөмжөөс нэг удаа өгнө."),
+      el("p", { class: "muted" }, "Дахин өгөх шаардлагатай бол багшид хандана уу."),
+      (MODE === "gh" && S && S.code) ? el("p", {}, el("button", { onclick: async () => {
+        await initCaps();
+        try { await DBC.doc(TAKEN + "/" + S.code).set({ u: UID, t: Date.now() }); lockClear(); S = null; IMGS = [[], [], [], [], []]; persistImgs(); showStart(); }
+        catch (e) { alert("Багш дахин өгөх зөвшөөрөл олгоогүй байна."); }
+      } }, "Дахин өгөх зөвшөөрөл авсан")) : null),
+    el("div", { class: "footer" }, el("button", { class: "link", onclick: showTeacher }, "Багшийн хэсэг")));
+}
+
+/* ---------- test ---------- */
+function answeredCount() {
+  const a = S.ans; let c = 0;
+  c += a.tf.filter(x => x).length; c += a.mc.filter(x => x).length;
+  c += a.fl.filter(arr => arr.length && arr.every(x => (x || "").trim())).length;
+  c += a.pr.filter((x, i) => IMGS[i].length > 0 || (x || "").trim().length > 3).length;
+  return c;
+}
+function updateProgress() {
+  const c = answeredCount(), t = TFN + MCN + FLN + PRN;
+  const pe = document.getElementById("pcount"); if (pe) pe.textContent = c + " / " + t;
+  const pb = document.getElementById("pbar"); if (pb) pb.style.width = (100 * c / t) + "%";
+}
+async function showTest() {
+  clearInterval(timerId); root.replaceChildren();
+  const saved = await kvGet("imgs"); if (Array.isArray(saved) && saved.length === PRN) IMGS = saved;
+  const V = VARIANTS[S.variant - 1];
+  const endAt = S.start + CONFIG.durationMin * 60000;
+  const tm = el("span", { class: "timer", id: "timer", role: "timer" }, "--:--");
+  root.append(el("div", { class: "bar" },
+    el("div", { class: "who" }, el("b", {}, S.name), el("span", { class: "muted" }, (S.code || "") + " · " + S.group)),
+    el("span", { class: "muted" }, "Хариулсан: ", el("b", { id: "pcount" }, "0")), tm,
+    el("div", { class: "prog" }, el("i", { id: "pbar" }))));
+
+  const s1 = el("div", { class: "card" }, el("h2", {}, "1-р хэсэг. Үнэн, Худал"), el("p", { class: "muted" }, "Зөв бол Ү, буруу бол Х. Асуулт бүр 0.1 оноо."));
+  V.tf.forEach((t, i) => {
+    const bY = el("button", { type: "button" }, "Ү"), bN = el("button", { type: "button" }, "Х");
+    const paint = () => { const v = S.ans.tf[i]; bY.classList.toggle("sel", v === "T"); bN.classList.toggle("sel", v === "F"); bY.setAttribute("aria-pressed", v === "T"); bN.setAttribute("aria-pressed", v === "F"); };
+    bY.onclick = () => { S.ans.tf[i] = S.ans.tf[i] === "T" ? null : "T"; paint(); save(); updateProgress(); };
+    bN.onclick = () => { S.ans.tf[i] = S.ans.tf[i] === "F" ? null : "F"; paint(); save(); updateProgress(); };
+    paint();
+    s1.append(el("div", { class: "q" }, el("span", { class: "qn" }, (i + 1) + "."), t, el("div", { class: "tf" }, bY, bN)));
+  });
+  root.append(s1);
+
+  const s2 = el("div", { class: "card" }, el("h2", {}, "2-р хэсэг. Сонгох ба нөхөх"), el("p", { class: "muted" }, "1–10: нэг зөв хариу сонго. 11–15: хоосон зайг нөх. Асуулт бүр 0.1 оноо."));
+  V.mc.forEach((m, i) => {
+    const wrap = el("div", { class: "opts", role: "radiogroup" });
+    m.o.forEach((o, k) => {
+      const L = "abcd"[k];
+      const inp = el("input", { type: "radio", name: "mc" + i, value: L });
+      const lab = el("label", { class: "opt", style: "margin:0;font-weight:400" }, inp, el("b", {}, L + ")"), el("span", {}, o));
+      inp.checked = S.ans.mc[i] === L; lab.classList.toggle("sel", inp.checked);
+      inp.onchange = () => { S.ans.mc[i] = L; wrap.querySelectorAll(".opt").forEach(x => x.classList.remove("sel")); lab.classList.add("sel"); save(); updateProgress(); };
+      wrap.append(lab);
+    });
+    s2.append(el("div", { class: "q" }, el("span", { class: "qn" }, (i + 1) + "."), m.q, wrap));
+  });
+  V.fl.forEach((q, i) => {
+    const parts = q.split(BLANK), nb = parts.length - 1;
+    const box = el("div", { class: "q fill" }, el("span", { class: "qn" }, (MCN + i + 1) + "."));
+    if (!S.ans.fl[i] || S.ans.fl[i].length !== nb) S.ans.fl[i] = Array(nb).fill("");
+    parts.forEach((p, k) => {
+      box.append(p);
+      if (k < nb) {
+        const inp = el("input", { type: "text", "aria-label": "Хоосон зай " + (k + 1), autocomplete: "off", autocapitalize: "off", spellcheck: "false" });
+        inp.value = S.ans.fl[i][k] || "";
+        inp.oninput = () => { S.ans.fl[i][k] = inp.value; save(); updateProgress(); };
+        box.append(inp);
+      }
+    });
+    s2.append(box);
+  });
+  root.append(s2);
+
+  const s3 = el("div", { class: "card" }, el("h2", {}, "3-р хэсэг. Бодлого"),
+    el("p", { class: "muted" }, "Бодлого бүр 1.4 оноо. Бодолтоо цаасан дээр гараар бичиж, зургийг нь бодлого бүрийн доор upload хийнэ. Томьёо, орлуулалт, нэгжийг бүгдийг нь бич."),
+    el("div", { class: "note" }, "Зургийг тод, гэрэлтэй, бүтэн хуудас харагдахаар авна. Бодлого бүрт хамгийн ихдээ " + MAXIMG + " зураг. Зураг зурах шаардлагатай хэсгийг цаасан дээрээ зур."));
+  const figFor = { 1: FIGS.p2, 2: FIGS.p3, 3: FIGS.p4 };
+  V.pr.forEach((p, i) => {
+    const thumbs = el("div", { class: "thumbs" }), status = el("p", { class: "muted", role: "status" });
+    const paintThumbs = () => {
+      thumbs.replaceChildren();
+      IMGS[i].forEach((src, k) => thumbs.append(el("div", { class: "th" }, el("img", { src, alt: p.title + ", зураг " + (k + 1) }),
+        el("button", { type: "button", class: "x", "aria-label": "Зургийг устгах", onclick: async () => { IMGS[i].splice(k, 1); paintThumbs(); await persistImgs(); updateProgress(); } }, "×"))));
+      status.textContent = IMGS[i].length ? IMGS[i].length + " зураг орсон" : "Зураг оруулаагүй байна";
+    };
+    const fi = el("input", { type: "file", accept: "image/*", multiple: true, class: "hide", "aria-label": p.title + " зураг" });
+    fi.onchange = async () => {
+      const files = [...fi.files]; fi.value = "";
+      for (const f of files) {
+        if (IMGS[i].length >= MAXIMG) { status.textContent = "Хамгийн ихдээ " + MAXIMG + " зураг."; break; }
+        status.textContent = "Зургийг боловсруулж байна…";
+        try { IMGS[i].push(await compressImage(f)); } catch (e) { status.textContent = "Зургийг уншиж чадсангүй. Өөр зураг сонго."; }
+      }
+      paintThumbs(); await persistImgs(); updateProgress();
+      if (!IMG_OK) status.textContent += " (хөтөч зургийг хадгалахгүй байна: хуудсыг бүү шинэчил)";
+    };
+    const note = el("textarea", { placeholder: "Нэмэлт тайлбар (заавал биш)", "aria-label": p.title + " нэмэлт тайлбар", style: "min-height:60px" });
+    note.value = S.ans.pr[i] || "";
+    note.oninput = () => { S.ans.pr[i] = note.value; save(); updateProgress(); };
+    s3.append(el("div", { class: "q" },
+      el("h3", {}, p.title, " ", el("span", { class: "tag" }, p.pts + " оноо")),
+      p.intro ? el("p", {}, p.intro) : null,
+      figFor[i] ? el("div", { class: "figbox", html: figFor[i] }) : null,
+      el("div", { class: "parts" }, p.parts.map(t => el("div", {}, t))),
+      el("div", { style: "margin-top:10px" }, el("button", { type: "button", class: "primary", onclick: () => fi.click() }, "📷 Бодолтын зураг оруулах"), fi),
+      thumbs, status, note));
+    paintThumbs();
+  });
+  root.append(s3);
+  root.append(el("div", { class: "card" }, el("p", {}, "Бүх хэсгээ шалгасны дараа илгээнэ. Илгээсний дараа засах, дахин өгөх боломжгүй."),
+    el("button", { class: "primary", onclick: confirmSubmit }, "Шалгалтыг дуусгах")));
+  updateProgress();
+  const tick = () => {
+    const left = Math.round((endAt - Date.now()) / 1000);
+    tm.textContent = fmtTime(left);
+    tm.classList.toggle("low", left <= 600 && left > 120); tm.classList.toggle("crit", left <= 120);
+    if (left <= 0) { clearInterval(timerId); doSubmit(true); }
+  };
+  tick(); timerId = setInterval(tick, 1000);
+}
+document.addEventListener("visibilitychange", () => { if (document.hidden && S && S.start && !S.submitted) { S.tab = (S.tab || 0) + 1; save(); } });
+function modal(box) { const m = el("div", { class: "modal", role: "dialog", "aria-modal": "true" }, box); document.body.append(m); return m; }
+function confirmSubmit() {
+  const left = (TFN + MCN + FLN + PRN) - answeredCount();
+  const m = modal(el("div", { class: "box" }, el("h3", {}, "Шалгалтыг дуусгах уу?"),
+    el("p", {}, left ? "Хариулаагүй " + left + " зүйл байна." : "Бүх зүйлд хариулсан байна."),
+    el("div", { class: "row", style: "margin-top:12px" }, el("button", { onclick: () => m.remove() }, "Буцах"), el("button", { class: "primary", onclick: () => { m.remove(); doSubmit(false); } }, "Илгээх"))));
+}
+
+/* ---------- submit (automatic, to the teacher's database) ---------- */
+let submitting = false;
+async function doSubmit(auto) {
+  if (!S || S.submitted || submitting) return;
+  submitting = true; clearInterval(timerId);
+  const payload = { v: S.variant, c: S.code, n: S.name, g: S.group, s: S.start, e: Date.now(), tab: S.tab || 0, auto: !!auto, ni: IMGS.map(a => a.length), a: S.ans };
+  S.pending = payload; save();
+  root.replaceChildren(el("h1", {}, "Хариуг илгээж байна…"), el("div", { class: "card" }, msg("Хуудсыг хаахгүй байна уу.", "muted"), el("p", { id: "sp", class: "muted", role: "status" }, "")));
+  const sp = () => document.getElementById("sp");
+  try {
+    if (!DBC || !UID) throw new Error("no-db");
+    const RID = MODE === "gh" ? S.code : UID;
+    let n = 0; const total = IMGS.reduce((a, x) => a + x.length, 0);
+    for (let p = 0; p < PRN; p++) for (let k = 0; k < IMGS[p].length; k++) {
+      await DBC.doc(RES + "/" + RID + "/img/p" + p + "k" + k).set({ p, k, d: IMGS[p][k] });
+      n++; if (sp()) sp().textContent = "Зураг " + n + " / " + total;
+    }
+    await DBC.doc(RES + "/" + RID).set(MODE === "gh" ? Object.assign({}, payload, { a: packAns(payload.a) }) : payload);
+    S.submitted = true; S.end = payload.e; delete S.pending; save(); lockSet();
+    IMGS = [[], [], [], [], []]; persistImgs();
+    submitting = false; showDone();
+  } catch (e) {
+    submitting = false; showFail();
+  }
+}
+function showDone() {
+  clearInterval(timerId);
+  root.replaceChildren(el("h1", {}, "Хариу бүртгэгдлээ"),
+    el("p", { class: "muted" }, S.name + " · " + S.group + " · Вариант " + S.variant + " · Зарцуулсан хугацаа " + fmtTime(((S.end || Date.now()) - S.start) / 1000)),
+    el("div", { class: "card" }, el("h2", {}, "Баярлалаа"), el("p", {}, "Таны хариу багшид автоматаар хүрлээ. Код илгээх шаардлагагүй."), el("p", { class: "muted" }, "Шалгалтыг энэ төхөөрөмжөөс дахин өгөх боломжгүй. Хуудсыг хааж болно.")),
+    el("div", { class: "footer" }, el("button", { class: "link", onclick: showTeacher }, "Багшийн хэсэг")));
+}
+function showFail() {
+  const m = msg("", "muted");
+  root.replaceChildren(el("h1", {}, "Хариуг илгээж чадсангүй"),
+    el("div", { class: "card" },
+      el("p", {}, "Сүлжээ эсвэл нэвтрэлтийн асуудал гарсан байж болно. Хариу энэ төхөөрөмжид хадгалагдсан тул хуудсыг хаахгүйгээр дахин оролд."),
+      el("div", { class: "row" },
+        el("button", { class: "primary", onclick: async () => { await initCaps(); doSubmit(!!(S.pending && S.pending.auto)); } }, "Дахин илгээх"),
+        el("button", { onclick: async () => {
+          const o = JSON.stringify({ fmt: "etm201-fallback", rec: S.pending, imgs: IMGS });
+          const ok = await saveFile("ETM201_" + safeId(S.group) + "_V" + S.variant + ".json", o);
+          m.textContent = ok ? "Файл хадгалагдлаа. Үүнийг багшид өг." : "Файл хадгалах боломжгүй.";
+        } }, "Нөөц файл хадгалах")), m));
+}
+
+/* ---------- grading (teacher) ---------- */
+let KEY = null;
+const LOOK = { "а": "a", "в": "b", "е": "e", "к": "k", "м": "m", "н": "h", "о": "o", "р": "p", "с": "c", "т": "t", "х": "x", "у": "y", "і": "i" };
+function norm(s) { return String(s || "").toLowerCase().replace(/,/g, ".").replace(/[\s·*×.]+$/g, "").replace(/[\s·*×]/g, "").split("").map(c => LOOK[c] || c).join(""); }
+function leadNum(s) { const m = /^[-+]?\d*\.?\d+/.exec(s); return m ? parseFloat(m[0]) : null; }
+function altMatch(inp, alt) { const a = norm(alt); if (inp === a) return true; if (/^[-+]?\d*\.?\d+$/.test(a)) { const n = leadNum(inp); return n !== null && Math.abs(n - parseFloat(a)) < 1e-9; } return false; }
+function fillOK(inputs, k) {
+  const ins = inputs.map(norm);
+  if (!ins.length || ins.some(x => !x)) return false;
+  const ok = (i, j) => k.alts[j].some(a => altMatch(ins[i], a));
+  if (!k.un) return ins.every((x, i) => ok(i, i));
+  const used = new Set();
+  const rec = (i) => { if (i === ins.length) return true; for (let j = 0; j < k.alts.length; j++) { if (!used.has(j) && ok(i, j)) { used.add(j); if (rec(i + 1)) return true; used.delete(j); } } return false; };
+  return ins.length === k.alts.length && rec(0);
+}
+function grade(rec) {
+  const k = KEY[rec.v - 1];
+  const tf = rec.a.tf.map((x, i) => x == null ? null : (x === "T") === k.tf[i]);
+  const mc = rec.a.mc.map((x, i) => x == null ? null : x === k.mc[i]);
+  const fl = rec.a.fl.map((arr, i) => fillOK(arr || [], k.fl[i]));
+  const cnt = a => a.filter(x => x === true).length;
+  return { tf, mc, fl, s1: cnt(tf) * CONFIG.perTF, s2: (cnt(mc) + cnt(fl)) * CONFIG.perMC };
+}
+async function unlock(pass) {
+  const enc = new TextEncoder();
+  const km = await crypto.subtle.importKey("raw", enc.encode(pass), "PBKDF2", false, ["deriveKey"]);
+  const key = await crypto.subtle.deriveKey({ name: "PBKDF2", salt: bytes(KEYBLOB.s), iterations: KEYBLOB.i, hash: "SHA-256" }, km, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+  const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: bytes(KEYBLOB.iv) }, key, bytes(KEYBLOB.c));
+  return JSON.parse(new TextDecoder().decode(pt));
+}
+
+/* ---------- teacher ---------- */
+let RECS = [], GRADES = {}, unsubs = [], FILES = [], RFULL = [], GFILTER = "all";
+function manualTotal(uid) { const g = GRADES[uid]; return g && g.pts ? g.pts.reduce((a, x) => a + (x == null ? 0 : +x), 0) : 0; }
+function manualDone(uid) { const g = GRADES[uid]; return !!(g && g.pts && g.pts.length === PRN && g.pts.every(x => x != null)); }
+function allRecs() { return RECS.concat(FILES); }
+function stopSubs() { unsubs.forEach(u => { try { u(); } catch (e) {} }); unsubs = []; }
+function backHome() { stopSubs(); if (S && S.start && !S.submitted) showTest(); else if (S && S.submitted) showStart(); else showStart(); }
+function mergedRows() {
+  const byCode = {}; allRecs().forEach(r => { if (r.c) byCode[normCode(r.c)] = r; });
+  const known = new Set(RFULL.map(s => s.c));
+  const out = RFULL.map(s => ({ s, r: byCode[s.c] || null }));
+  allRecs().forEach(r => { if (!r.c || !known.has(normCode(r.c))) out.push({ s: { c: r.c || "?", n: r.n, g: r.g, vr: r.v }, r }); });
+  return out.sort((a, b) => (a.s.g || "").localeCompare(b.s.g || "") || (a.s.n || "").localeCompare(b.s.n || "", "mn"));
+}
+function scoreOf(r) { if (!r) return null; const g = grade(r), m3 = manualTotal(r.uid); return { g, m3, done: manualDone(r.uid), total: g.s1 + g.s2 + m3 }; }
+function showTeacher() {
+  clearInterval(timerId); root.replaceChildren();
+  if (!KEY) {
+    const pw = el("input", { type: "password", id: "pw", placeholder: "Нууц үг", autocomplete: "current-password" });
+    const err = el("p", { class: "hide", style: "color:var(--bad)" });
+    const em = el("input", { type: "text", id: "tem", placeholder: "Багшийн имэйл", autocomplete: "username" });
+    const go = async () => {
+      err.classList.add("hide");
+      let o;
+      try { o = await unlock(pw.value); } catch (e) { err.textContent = "Нууц үг буруу, эсвэл энэ хөтөч шифрийг дэмжихгүй байна."; err.classList.remove("hide"); return; }
+      if (MODE === "gh") {
+        try { await initCaps(); if (!FB) throw new Error("no-fb"); await FB.teacherLogin(em.value.trim(), pw.value); }
+        catch (e) { err.textContent = "Серверт нэвтэрч чадсангүй. Имэйл, нууц үгээ шалгана уу."; err.classList.remove("hide"); return; }
+      }
+      KEY = o.v; RFULL = o.roster || []; showTeacher();
+    };
+    pw.addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+    root.append(el("h1", {}, "Багшийн хэсэг"), el("div", { class: "card" }, MODE === "gh" ? [el("label", { for: "tem" }, "Имэйл"), em] : null, el("label", { for: "pw" }, "Нууц үг"), pw, err, el("p", {}, el("button", { class: "primary", onclick: go }, "Нээх"), " ", el("button", { onclick: backHome }, "Буцах"))));
+    return;
+  }
+  const info = msg("");
+  const list = el("div"), seg = el("div", { class: "seg" });
+  const groups = ["all"].concat([...new Set(RFULL.map(s => s.g))].sort());
+  const render = () => {
+    seg.replaceChildren(...groups.map(g => el("button", { class: GFILTER === g ? "sel" : "", onclick: () => { GFILTER = g; render(); } }, g === "all" ? "Бүгд" : "Бүлэг " + g)));
+    list.replaceChildren();
+    const rows = mergedRows().filter(x => GFILTER === "all" || x.s.g === GFILTER);
+    const taken = rows.filter(x => x.r).length;
+    let sum = 0, cnt = 0;
+    const tb = el("table", {}, el("thead", {}, el("tr", {}, ["№", "Код", "Нэр", "Бүлэг", "Вар.", "Төлөв", "1-р", "2-р", "3-р", "Нийт /10", "Хугацаа", "Цонх", "Зураг", ""].map(h => el("th", {}, h)))));
+    const body = el("tbody");
+    rows.forEach((x, i) => {
+      const r = x.r, sc = scoreOf(r);
+      if (sc) { sum += sc.total; cnt++; }
+      body.append(el("tr", {}, el("td", {}, i + 1), el("td", {}, x.s.c), el("td", {}, x.s.n), el("td", {}, x.s.g), el("td", {}, x.s.vr),
+        el("td", {}, el("span", { class: "st " + (r ? "on" : "off") }, r ? "Өгсөн" : "Өгөөгүй")),
+        el("td", {}, sc ? f1(sc.g.s1) + "/1.5" : "—"), el("td", {}, sc ? f1(sc.g.s2) + "/1.5" : "—"),
+        el("td", {}, sc ? (sc.done ? f1(sc.m3) + "/7" : (sc.m3 ? f1(sc.m3) + "*" : "—")) : "—"),
+        el("td", {}, sc ? el("b", {}, f1(sc.total) + (sc.done ? "" : "*")) : "—"),
+        el("td", {}, r ? fmtTime((r.e - r.s) / 1000) : "—"), el("td", {}, r ? (r.tab || 0) : "—"), el("td", {}, r && r.ni ? r.ni.reduce((a, y) => a + y, 0) : "—"),
+        el("td", {}, r ? el("button", { onclick: () => showDetail(r.uid) }, "Нээх") : "")));
+    });
+    tb.append(body);
+    list.append(el("p", { class: "muted" }, "Өгсөн " + taken + " / " + rows.length + (cnt ? " · дундаж " + f1(sum / cnt) + " / 10" : "") + " (* 3-р хэсгийн оноо бүрэн биш)"), el("div", { style: "overflow-x:auto" }, tb));
+  };
+  const fileIn = el("input", { type: "file", accept: ".json,application/json", multiple: true, class: "hide", "aria-label": "Нөөц файл" });
+  fileIn.onchange = async () => {
+    let n = 0, bad = 0;
+    for (const f of [...fileIn.files]) { try { const o = JSON.parse(await f.text()); if (o.fmt !== "etm201-fallback" || !o.rec) { bad++; continue; } const uid = "file_" + hash32(JSON.stringify(o.rec)); if (!FILES.find(x => x.uid === uid)) { FILES.push(Object.assign({}, o.rec, { uid, _imgs: o.imgs })); n++; } } catch (e) { bad++; } }
+    fileIn.value = ""; render(); info.textContent = n + " нөөц файл нэмэгдлээ" + (bad ? ", " + bad + " уншигдсангүй." : ".");
+  };
+  root.append(el("h1", {}, "Багшийн хэсэг"),
+    el("div", { class: "card" }, el("h2", {}, "Оюутнуудын хариу"), seg, list,
+      el("div", { class: "row", style: "margin-top:12px" }, el("button", { class: "primary", onclick: exportCsv }, "CSV болгон хадгалах"), el("button", { onclick: () => fileIn.click() }, "Нөөц файл оруулах"), fileIn), info),
+    el("div", { class: "card" }, el("h3", {}, "Түгжээ"), el("p", { class: "muted" }, "Энэ төхөөрөмжийн түгжээг цэвэрлэж туршилтаар дахин өгөх бол:"), el("button", { class: "danger", onclick: () => askYes("Энэ төхөөрөмжийн шалгалтын түгжээг цэвэрлэх үү?", () => { lockClear(); S = null; info.textContent = "Түгжээ цэвэрлэгдлээ."; }) }, "Түгжээ цэвэрлэх")),
+    el("div", { class: "footer" }, el("button", { class: "link", onclick: backHome }, "Буцах")));
+  render();
+  stopSubs();
+  if (DBC) {
+    try {
+      unsubs.push(DBC.collection(RES).onSnapshot(snap => { RECS = snap.docs.map(d => unpackRec(Object.assign({ uid: d.id }, d.data()))); render(); }, e => { info.textContent = "Хариу унших боломжгүй (" + (e && e.code) + ")."; }));
+      unsubs.push(DBC.collection(GR).onSnapshot(snap => { GRADES = {}; snap.docs.forEach(d => { GRADES[d.id] = d.data(); }); render(); }, () => {}));
+    } catch (e) { info.textContent = "Мэдээллийн санд холбогдож чадсангүй."; }
+  }
+}
+function askYes(text, yes) {
+  const m = modal(el("div", { class: "box" }, el("h3", {}, text), el("div", { class: "row", style: "margin-top:12px" }, el("button", { onclick: () => m.remove() }, "Үгүй"), el("button", { class: "danger", onclick: () => { m.remove(); yes(); } }, "Тийм"))));
+}
+function chips(arr, offset, show) {
+  return el("div", { class: "chips" }, arr.map((x, i) => el("span", { class: "chip " + (x === true ? "ok" : x === false ? "no" : "na"), title: show ? show(i) : "" }, (offset + i + 1) + (x === true ? "✓" : x === false ? "✗" : "·"))));
+}
+async function showDetail(uid) {
+  const r = allRecs().find(x => x.uid === uid); if (!r) return;
+  stopSubs(); root.replaceChildren();
+  const V = VARIANTS[r.v - 1], K = KEY[r.v - 1], g = grade(r);
+  const tot = el("b", {});
+  const upd = () => { tot.textContent = f1(g.s1 + g.s2 + manualTotal(uid)) + " / 10"; };
+  const detail = el("div", { class: "card" }, el("h2", {}, "Автомат оноо"),
+    el("p", {}, "1-р хэсэг: ", el("b", {}, f1(g.s1) + "/1.5"), "   2-р хэсэг: ", el("b", {}, f1(g.s2) + "/1.5")),
+    el("h3", {}, "1-р хэсэг (Ү/Х)"), chips(g.tf, 0, i => "Оюутан: " + (r.a.tf[i] || "—") + "; зөв: " + (K.tf[i] ? "T" : "F")),
+    el("h3", {}, "2-р хэсэг, сонгох"), chips(g.mc, 0, i => "Оюутан: " + (r.a.mc[i] || "—") + "; зөв: " + K.mc[i]),
+    el("h3", {}, "2-р хэсэг, нөхөх"), chips(g.fl, 10, i => "Оюутан: " + (r.a.fl[i] || []).join(" ; ") + "; зөв: " + K.fl[i].show),
+    el("p", { class: "muted" }, "Хулганыг тэмдэг дээр аваачвал оюутны болон зөв хариу харагдана."));
+  r.a.fl.forEach((arr, i) => { if (g.fl[i] === false) detail.append(el("p", {}, el("b", {}, (11 + i) + ". "), "оюутан: «" + arr.join(" ; ") + "», зөв: «" + K.fl[i].show + "»")); });
+  root.append(el("p", {}, el("button", { onclick: showTeacher }, "← Жагсаалт")),
+    el("h1", {}, r.n), el("p", { class: "muted" }, r.g + " · Вариант " + r.v + " · " + fmtTime((r.e - r.s) / 1000) + " · цонх солисон " + (r.tab || 0) + (r.auto ? " · хугацаа дуусч автоматаар илгээгдсэн" : "")), detail);
+  // images
+  let imgs = r._imgs || null;
+  if (!imgs && DBC && !String(uid).startsWith("file_")) {
+    try { const snap = await DBC.collection(RES + "/" + uid + "/img").get(); imgs = [[], [], [], [], []]; snap.docs.map(d => d.data()).sort((a, b) => a.p - b.p || a.k - b.k).forEach(d => { if (imgs[d.p]) imgs[d.p].push(d.d); }); } catch (e) { imgs = null; }
+  }
+  const solBox = el("div");
+  const pts = (GRADES[uid] && GRADES[uid].pts) ? GRADES[uid].pts.slice() : Array(PRN).fill(null);
+  let writing = Promise.resolve();
+  V.pr.forEach((p, i) => {
+    const inp = el("input", { type: "number", min: "0", max: "1.4", step: "0.1", class: "pts", "aria-label": p.title + " оноо" });
+    if (pts[i] != null) inp.value = pts[i];
+    inp.onchange = () => {
+      pts[i] = inp.value === "" ? null : Math.min(1.4, Math.max(0, parseFloat(inp.value)));
+      GRADES[uid] = Object.assign({}, GRADES[uid], { pts: pts.slice() }); upd();
+      if (DBC && !String(uid).startsWith("file_")) writing = writing.then(() => DBC.doc(GR + "/" + uid).set({ pts: pts.slice() })).catch(() => {});
+    };
+    solBox.append(el("div", { class: "card" }, el("h3", {}, p.title),
+      el("p", { class: "muted" }, "Оюутны бодолт:"),
+      (imgs && imgs[i] && imgs[i].length) ? el("div", { class: "pimgs" }, imgs[i].map(src => el("img", { src, alt: p.title + " оюутны бодолт" }))) : el("p", { class: "muted" }, "(зураг оруулаагүй)"),
+      (r.a.pr[i] || "").trim() ? el("div", { class: "stu" }, r.a.pr[i]) : null,
+      el("p", { class: "muted" }, "Зөв бодолт ба оноо:"), el("div", { class: "sol", html: K.sol[i] }),
+      el("label", {}, "Оноо (0–1.4) ", inp)));
+  });
+  root.append(el("div", { class: "card" }, el("h2", {}, "3-р хэсэг"), el("p", {}, "Нийт: ", tot)), solBox,
+    el("div", { class: "card" }, el("h3", {}, "Дахин өгөх зөвшөөрөл"), el("p", { class: "muted" }, "Энэ оюутны хариуг устгавал оюутан шалгалтыг дахин өгч чадна."),
+      el("button", { class: "danger", onclick: () => askYes("Энэ оюутны хариу, зураг, оноог устгах уу?", async () => {
+        try {
+          if (String(uid).startsWith("file_")) { FILES = FILES.filter(x => x.uid !== uid); }
+          else {
+            const s = await DBC.collection(RES + "/" + uid + "/img").get(); for (const d of s.docs) await DBC.doc(RES + "/" + uid + "/img/" + d.id).delete();
+            await DBC.doc(RES + "/" + uid).delete(); await DBC.doc(GR + "/" + uid).delete();
+            try { await DBC.doc(TAKEN + "/" + (MODE === "gh" ? uid : (r.c || ""))).delete(); } catch (e2) {}
+          }
+          showTeacher();
+        } catch (e) { alert("Устгаж чадсангүй"); }
+      }) }, "Хариуг устгах")));
+  upd();
+}
+async function exportCsv() {
+  const rows = [["№", "Оюутны код", "Овог нэр", "Бүлэг", "Вариант", "Төлөв", "1-р хэсэг", "2-р хэсэг", "3-р хэсэг", "Нийт /10", "Хугацаа", "Цонх солисон", "3-р хэсэг дууссан"]];
+  mergedRows().forEach((x, i) => {
+    const sc = scoreOf(x.r);
+    rows.push([i + 1, x.s.c, x.s.n, x.s.g, x.s.vr, x.r ? "өгсөн" : "өгөөгүй", sc ? f1(sc.g.s1) : "", sc ? f1(sc.g.s2) : "", sc ? f1(sc.m3) : "", sc ? f1(sc.total) : "", x.r ? fmtTime((x.r.e - x.r.s) / 1000) : "", x.r ? (x.r.tab || 0) : "", sc ? (sc.done ? "тийм" : "үгүй") : ""]);
+  });
+  const csv = "\ufeff" + rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(",")).join("\r\n");
+  const ok = await saveFile("ETM201_results.csv", csv);
+  if (!ok) { const w = el("textarea", { class: "code" }); w.value = csv; root.append(el("div", { class: "card" }, el("p", {}, "Файл хадгалах боломжгүй. Доорх текстийг хуулж Excel рүү буулга:"), w)); }
+}
+
+/* ---------- init ---------- */
+(async function init() {
+  const saved = await kvGet("imgs"); if (Array.isArray(saved) && saved.length === PRN) IMGS = saved;
+  if (S && S.submitted) { showStart(); return; }
+  if (S && S.start && !S.submitted) { await initCaps(); if (S.pending) { return doSubmit(!!S.pending.auto); } return showTest(); }
+  showStart();
+})();
+</script>
+
+</body>
+</html>
