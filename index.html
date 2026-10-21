@@ -89,7 +89,7 @@ const FIGS = {"p2": "<svg class=\"fig\" viewBox=\"200 24 360 190\" role=\"img\" 
 const LS = "etm201_online_exam_v2";
 const TFN = 15, MCN = 10, FLN = 5, PRN = 5, MAXIMG = 4;
 const BLANK = "……………";
-const FIREBASE_CONFIG = { apiKey: "", authDomain: "", projectId: "", appId: "" }; // Firebase console -> Project settings -> Web app
+const FIREBASE_CONFIG = { apiKey: "AIzaSyD65Uq9zMvHlpQ9nzNRQyNBkHSc5n3fQRY", authDomain: "etm201-exam.firebaseapp.com", projectId: "etm201-exam", appId: "1:169863608546:web:f01cdfd21a6629488906bb" }; // Firebase console -> Project settings -> Web app
 const MODE = (typeof claude !== "undefined" && claude && claude.use) ? "claude" : "gh";
 const RES = "exam_results", GR = "exam_grades", TAKEN = MODE === "claude" ? "exam_taken" : "exam_started";
 let FB = null, INIT_ERR = "";
